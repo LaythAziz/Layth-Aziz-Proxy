@@ -32,7 +32,7 @@ label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:1
 </section>
 <section class="card cloud-panel">
   <h2>إدارة البروكسيات السحابية</h2>
-  <p>أنشئ سيرفراً عاماً حقيقياً. يحصل كل بروكسي على IP من مزوّد الاستضافة ومنفذ TCP وSecret مستقلين.</p>
+  <p>هذا الخيار لإنشاء سيرفر خاص تملكه أنت عبر مزوّد استضافة مدفوع. إذا تريد بروكسي جاهزاً مجانياً استخدم قائمة البروكسيات العالمية أعلاه.</p>
   <label for="cloudName">اسم البروكسي الجديد</label>
   <input id="cloudName" value="Layth Proxy" maxlength="60" />
   <label for="cloudLocation">موقع السيرفر</label>
@@ -44,7 +44,7 @@ label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:1
     <option value="hil">الولايات المتحدة — Hillsboro</option>
     <option value="sin">سنغافورة — Singapore</option>
   </select>
-  <button class="btn btn-primary wide" id="provisionProxy" type="button">توليد بروكسي وسيرفر حقيقي</button>
+  <button class="btn btn-primary wide" id="provisionProxy" type="button">إنشاء سيرفر خاص (يتطلب استضافة)</button>
   <div id="provisionResult" class="output" dir="ltr"></div>
   <div class="note">يتطلب إنشاء السيرفر ربط HETZNER_API_TOKEN. قد تُحتسب رسوم استضافة. لا يتم عرض IP إلا بعد تخصيصه فعلياً من المزوّد.</div>
   <label for="adminToken">رمز الإدارة الخاص</label>
