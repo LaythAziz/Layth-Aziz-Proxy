@@ -226,7 +226,7 @@ const translations={"فحص مباشر":"Live check","اتصالك يبدأ":"Yo
 translations["موقع غير محدد"]="Location unverified";translations["الموقع غير محدد"]="Location unverified";translations["عالمي — الموقع غير محدد"]="Global — location unverified";translations["اجتاز مصافحة MTProto"]="MTProto handshake verified";translations["زمن مصافحة MTProto من السيرفر"]="Server-side MTProto handshake latency";translations["جاري تحميل البروكسيات وفحصها…"]="Loading and verifying Telegram MTProto proxies…";translations["جاري الفحص…"]="Checking…";translations["المتصفح لا يدعم إشعارات الويب."]="This browser does not support web notifications.";translations["أحد البروكسيات المفضلة لم يعد متاحاً."]="A saved favorite is no longer available.";translations["توقف بروكسي مفضل"]="Favorite proxy unavailable";
 Object.assign(translations,{
 "عرض المزيد":"Load more","إعدادات الموقع":"Site settings","نسخ":"Copy","نسخ رابط Telegram":"Copy Telegram link","تم نسخ رابط Telegram":"Telegram link copied","تعذر النسخ من هذا المتصفح":"Could not copy from this browser","التحديث التلقائي":"Automatic refresh","فترة التحديث":"Refresh interval","45 ثانية":"45 seconds","75 ثانية":"75 seconds","دقيقتان":"2 minutes","5 دقائق":"5 minutes","تفعيل الإشعارات":"Enable notifications","ابحث بعنوان السيرفر أو المنفذ":"Search server or port","بحث في البروكسيات":"Search proxies","فلترة حسب الموقع":"Filter by location","كل المواقع":"All locations","الموقع غير محدد":"Location unknown","البروكسيات المستجيبة":"Responsive proxies","المفضلة":"Favorites",
-"الإشعارات":"Notifications","الإعدادات":"Settings",
+"الإشعارات":"Notifications","نفحص روابط البروكسيات المتاحة…":"Checking the supplied Telegram proxy links…","الإعدادات":"Settings",
 
 });
 const reverseTranslations={};for(const [ar,en] of Object.entries(translations)){if(!(en in reverseTranslations))reverseTranslations[en]=ar;}
@@ -288,7 +288,7 @@ async function load({silent=false}={}){
   if(!silent){
     refresh.disabled=true;
     refresh.textContent=translateText("جاري الفحص…");
-    statusText(proxies.length?"نجدد القائمة ونستبدل البروكسيات المتوقفة…":"نجمع المصادر ونفحص المنافذ المتاحة…");
+    statusText(proxies.length?"نجدد القائمة ونستبدل البروكسيات المتوقفة…":"نفحص روابط البروكسيات المتاحة…");
     if(!proxies.length){grid.replaceChildren();grid.classList.remove("stagger");for(let i=0;i<4;i++){const skeleton=document.createElement("div");skeleton.className="skeleton";grid.append(skeleton)}}
   }
   try{
