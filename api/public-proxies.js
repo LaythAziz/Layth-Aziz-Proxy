@@ -58,7 +58,7 @@ export default async function handler(req, res) {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ error: "Method not allowed" });
   }
-  res.setHeader("Cache-Control", "s-maxage=45, stale-while-revalidate=120");
+  res.setHeader("Cache-Control", "s-maxage=20, stale-while-revalidate=0");
   try {
     const { candidates, sources_ok, sources_total } = await fetchCandidates();
     const proxies = await probeCandidates(candidates);
