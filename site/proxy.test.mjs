@@ -88,5 +88,6 @@ test("complete bilingual interface translates every visible section and dynamic 
   assert.match(html, /function translateText\(/);
   assert.match(html, /translateText\(trimmed\)/);
   assert.match(html, /currentLanguage===\"en\"\?\"en-US\":\"ar-IQ\"/);
-  assert.match(html, /الصورة الشخصية لليث عزيز/);\n  assert.match(html, /const label=toEnglish\?\\"AR\\":\\"EN\\"/);
+  assert.match(html, /الصورة الشخصية لليث عزيز/);
+  assert.ok(html.includes('const label=toEnglish?"AR":"EN"'));
 });
