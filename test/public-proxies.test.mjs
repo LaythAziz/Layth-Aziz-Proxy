@@ -96,16 +96,27 @@ test("public proxy API aggregates multiple feeds and checks a larger rotating po
   assert.ok(api.includes("MTProxy_list/working.txt"));
   assert.ok(api.includes("tgmtproxy.github.io/mtproxy/proxies.txt"));
   assert.ok(api.includes("dubblebyte/free-mtproto-proxies"));
-  assert.ok(api.includes("limit: 240"));
-  assert.ok(api.includes("length: 20"));
-  assert.ok(api.includes("s-maxage=30, stale-while-revalidate=60"));
+  assert.ok(api.includes("limit: 120"));
+  assert.ok(api.includes("length: 12"));
+  assert.ok(api.includes("s-maxage=45, stale-while-revalidate=120"));
 });
 
 test("site automatically refreshes and keeps the last good proxy list after an update error", async () => {
   const { readFile } = await import("node:fs/promises");
   const html = await readFile(new URL("../site/index.html", import.meta.url), "utf8");
-  assert.ok(html.includes("setInterval(()=>{if(!document.hidden)load({silent:true})},75000)"));
-  assert.ok(html.includes('document.addEventListener("visibilitychange",()=>{if(!document.hidden)load({silent:true})})'));
+  assert.ok(html.includes("if(savedSettings.auto!==false)refreshTimer=setInterval(()=>{if(!document.hidden)load({silent:true})},savedSettings.interval)"));
+  assert.ok(html.includes('document.addEventListener("visibilitychange",()=>{if(!document.hidden&&savedSettings.auto!==false)load({silent:true})})'));
   assert.ok(html.includes("Refresh failed — showing the last successful list"));
   assert.ok(html.includes("if(proxies.length){"));
+});
+
+
+test("TCP probe exits promptly when a proxy hostname DNS lookup stalls", async () => {
+  const started = Date.now();
+  const result = await probeTcp("slow-dns.example", 443, {
+    dnsTimeoutMs: 15,
+    lookup: () => new Promise(() => {})
+  });
+  assert.deepEqual(result, { online: false, latency_ms: null });
+  assert.ok(Date.now() - started < 250, "DNS timeout should be bounded");
 });
