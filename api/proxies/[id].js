@@ -1,5 +1,5 @@
 import net from "node:net";
-import { requireAdmin } from "../../lib/proxy-security.js";
+import { requireAdmin, decryptSecret } from "../../lib/proxy-security.js";
 import { deleteProxy, getProxy, updateProxy } from "../../lib/proxy-store.js";
 import { deleteHetznerServer, setHetznerServerPower } from "../../lib/hetzner.js";
 
@@ -28,6 +28,12 @@ export default async function handler(req, res) {
       }
       await deleteProxy(id);
       return res.status(200).json({ deleted: true, server_deleted: Boolean(proxy.provider_server_id) });
+    }
+
+    if (req.method === "POST" && req.body?.action === "reveal-link") {
+      const secret = decryptSecret(proxy.secret_encrypted);
+      const link = `tg://proxy?server=${encodeURIComponent(proxy.server)}&port=${proxy.port}&secret=${secret}`;
+      return res.status(200).json({ id, telegram_link: link });
     }
 
     if (req.method === "POST" && ["start", "stop"].includes(req.body?.action)) {
