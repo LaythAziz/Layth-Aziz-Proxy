@@ -1,6 +1,6 @@
 import net from "node:net";
-import { requireAdmin, decryptSecret } from "../_lib/security.js";
-import { deleteProxy, getProxy, updateProxy } from "../_lib/store.js";
+import { requireAdmin, decryptSecret } from "../../lib/proxy-security.js";
+import { deleteProxy, getProxy, updateProxy } from "../../lib/proxy-store.js";
 
 function tcpCheck(host, port, timeoutMs = 4500) {
   return new Promise((resolve) => {
