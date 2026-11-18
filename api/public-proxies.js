@@ -35,7 +35,7 @@ async function probeCandidates(candidates) {
     while (cursor < candidates.length) {
       const index = cursor++;
       const proxy = candidates[index];
-      const result = await probeTcp(proxy.server, proxy.port, { timeoutMs: 1600 });
+      const result = await probeTcp(proxy.server, proxy.port, { timeoutMs: 1200 });
       if (result.online) checked[index] = {
         ...proxy,
         online: true,
