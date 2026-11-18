@@ -51,7 +51,7 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.doesNotMatch(html, /PERSONAL TELEGRAM DIRECTORY|LAYTH AZIZ · TELEGRAM PROXY DIRECTORY|خدمة مستقلة لا تدير أو تملك البروكسيات العامة المدرجة/);
   assert.match(html, /class="footer"[^>]*>\s*<span[^>]*>© 2026 LAYTH AZIZ PROXY<\/span>/);
   assert.match(html, /\.footer\{[^}]*justify-content:center[^}]*text-align:center/);
-  assert.match(html, /id="networkMap"/);
+  assert.doesNotMatch(html, /id="networkMap"|شبكة عالمية متجددة|نعرض عدد البروكسيات التي اجتازت مصافحة MTProto/);
   assert.doesNotMatch(html, /إدارة البروكسيات السحابية|ADMIN_API_TOKEN|Hetzner|GitHub/);
 });
 
@@ -75,7 +75,7 @@ test("language switching does not install a mutation observer or access storage 
 test("complete bilingual interface translates every visible section and dynamic state", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   for (const phrase of [
-    "الصورة الشخصية لليث عزيز", "آخر تحديث للقائمة", "على هذا الجهاز",
+    "الصورة الشخصية لليث عزيز", "على هذا الجهاز",
     "شبكة البروكسيات العالمية", "المتاح حالياً فقط — الترتيب من الأقل زمناً إلى الأعلى",
     "أقل من 100 ms", "أقل من 250 ms", "أقل من 500 ms",
     "اجتاز مصافحة MTProto", "زمن مصافحة MTProto من السيرفر", "مصدر عام",
@@ -95,13 +95,13 @@ test("complete bilingual interface translates every visible section and dynamic 
 
 test("public dashboard exposes proxy health analytics, global map, search, and advanced filters", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
-  for (const id of ["statsPanel", "statResponsive", "statSources", "statFavorites", "proxySearch", "regionFilter", "networkMap", "mapStatus", "settingsDialog", "refreshInterval", "autoRefreshToggle"]) {
+  for (const id of ["statsPanel", "statResponsive", "statSources", "statFavorites", "proxySearch", "regionFilter", "settingsDialog", "refreshInterval", "autoRefreshToggle"]) {
     assert.ok(html.includes(`id="${id}"`), "missing dashboard feature: " + id);
   }
   assert.match(html, /navigator\.clipboard/);
   assert.match(html, /lap_settings_v1/);
-  assert.match(html, /function updateDashboardStats/);
-  assert.match(html, /function renderNetworkMap/);
+  assert.match(html, /function updateDashboardStats/);\n  assert.doesNotMatch(html, /id="statUpdated"|آخر تحديث للقائمة/);
+  assert.doesNotMatch(html, /networkMap|mapStatus|renderNetworkMap|statUpdated|آخر تحديث/);
 });
 
 test("admin route clearly stays disabled until its private API and database exist", async () => {
