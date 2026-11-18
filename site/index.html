@@ -39,8 +39,9 @@ label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:1
   <button class="btn btn-primary wide" id="provisionProxy" type="button">توليد بروكسي وسيرفر حقيقي</button>
   <div id="provisionResult" class="output" dir="ltr"></div>
   <div class="note">يتطلب إنشاء السيرفر ربط HETZNER_API_TOKEN. قد تُحتسب رسوم استضافة. لا يتم عرض IP إلا بعد تخصيصه فعلياً من المزوّد.</div>
-  <label for="adminToken">مفتاح دخول الإدارة</label>
+  <label for="adminToken">رمز الإدارة الخاص</label>
   <input id="adminToken" type="password" autocomplete="off" placeholder="ADMIN_API_TOKEN" />
+  <p class="small">يُحفظ الرمز في جلسة هذا التبويب فقط، ويمكن مسحه من زر مسح المفتاح.</p>
   <div class="actions"><button class="btn btn-dark" id="loadProxies" type="button">تحديث القائمة</button><button class="btn btn-dark" id="clearToken" type="button">مسح المفتاح</button></div>
   <div class="note" style="margin-top:14px">لربط الإدارة تحتاج إعداد Supabase ومفاتيح البيئة في Vercel. لا تضع أي مفتاح سري داخل ملفات GitHub.</div>
   <div style="height:1px;background:var(--line);margin:20px 0"></div>
