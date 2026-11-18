@@ -48,6 +48,10 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST" && req.body?.action === "check") {
+      // Do not let a stored manual hostname become an arbitrary server-side TCP target.
+      if (proxy.provider_name !== "hetzner" || !proxy.provider_server_id) {
+        return res.status(409).json({ error: "فحص TCP متاح للسيرفرات السحابية المُنشأة من هذه اللوحة فقط." });
+      }
       const started = Date.now();
       const reachable = await tcpCheck(proxy.server, proxy.port);
       const latency = reachable ? Date.now() - started : null;
