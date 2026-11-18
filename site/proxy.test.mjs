@@ -38,7 +38,7 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.match(html, /id="notificationToggle"/);
   assert.match(html, /id="qrDialog"/);
   assert.match(html, /last_checked_at/);
-  assert.match(html, /localStorage/);
+  assert.match(html, /LANGUAGE_KEY="lap_language_v1"/);
   assert.match(html, /Notification\.requestPermission/);
   assert.match(html, /QRCode|qrserver\.com/);
   assert.match(html, /mask-reveal/);
@@ -58,7 +58,7 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
 test("site supports Arabic and English with a persistent language switch", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   assert.match(html, /id="languageToggle"/);
-  assert.match(html, /localStorage\.getItem\(["']lap_language_v1["']\)/);
+  assert.match(html, /LANGUAGE_KEY="lap_language_v1"/);
   assert.match(html, /document\.documentElement\.dir/);
   assert.match(html, /document\.documentElement\.lang/);
   assert.match(html, /TELEGRAM PROXY/);
