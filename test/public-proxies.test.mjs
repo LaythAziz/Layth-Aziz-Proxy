@@ -74,8 +74,8 @@ test("merges multiple public feeds into a larger deduplicated candidate pool", a
   const b = "tg://proxy?server=two.example&port=443&secret=0123456789abcdef0123456789abcdef";
   const c = "tg://proxy?server=three.example&port=443&secret=0123456789abcdef0123456789abcdef";
   const merged = mergeProxyFeeds([
-    { source: "feed-a", content: [a, b].join("\\n") },
-    { source: "feed-b", content: [b, c].join("\\n") }
+    { source: "feed-a", content: [a, b].join("\n") },
+    { source: "feed-b", content: [b, c].join("\n") }
   ], { limit: 10 });
   assert.deepEqual(merged.map(row => row.id), ["one.example:443", "two.example:443", "three.example:443"]);
   assert.equal(merged[0].source, "feed-a");
@@ -87,5 +87,5 @@ test("candidate pool limit can exceed the old 32-proxy ceiling", async () => {
   const rows = Array.from({ length: 75 }, (_, i) =>
     `tg://proxy?server=p${i}.example&port=443&secret=0123456789abcdef0123456789abcdef`
   );
-  assert.equal(mergeProxyFeeds([{ source: "large", content: rows.join("\\n") }], { limit: 75 }).length, 75);
+  assert.equal(mergeProxyFeeds([{ source: "large", content: rows.join("\n") }], { limit: 75 }).length, 75);
 });
