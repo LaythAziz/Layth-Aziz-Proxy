@@ -143,7 +143,7 @@ header:before,.quick-card:before,.proxy-card:before,.dialog:before{
 .network-copy h3{margin:0 0 8px}.network-copy p{color:var(--muted);font-size:12px;line-height:1.9;margin:0 0 10px}
 .network-copy strong{color:var(--cyan);font-size:13px}
 .extra-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.extra-controls input,.extra-controls select,.settings-row select{background:rgba(10,22,38,.72);color:var(--text);border:1px solid var(--glass-edge);border-radius:12px;padding:11px 13px;font:inherit;font-size:12px;min-width:0}
+.extra-controls input,.extra-controls select,.controls input,.settings-row select{background:rgba(10,22,38,.72);color:var(--text);border:1px solid var(--glass-edge);border-radius:12px;padding:11px 13px;font:inherit;font-size:12px;min-width:0}
 .extra-controls input{flex:1 1 180px}
 .settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #ffffff16;font-size:12px}
 .settings-row:last-child{border:0}
@@ -177,7 +177,7 @@ header:before,.quick-card:before,.proxy-card:before,.dialog:before{
     <div class="stat-tile"><small>المفضلة</small><strong id="statFavorites">0</strong></div>
     <div class="stat-tile"><small>آخر تحديث</small><strong id="statUpdated">—</strong></div>
   </div>
-  <section class="network-panel reveal" aria-label="خريطة الشبكة العالمية">
+  <section class="network-panel reveal" id="networkMap" aria-label="تصور الشبكة العالمية">
     <div class="network-globe"><svg viewBox="0 0 300 300" role="img" aria-label="رسم توضيحي لشبكة عالمية دون تحديد مواقع الخوادم">
       <circle class="globe-core" cx="150" cy="150" r="105"/><ellipse class="globe-line" cx="150" cy="150" rx="48" ry="105"/><ellipse class="globe-line" cx="150" cy="150" rx="82" ry="105"/><path class="globe-line" d="M45 150h210M58 105h184M58 195h184M150 45v210M78 78l144 144M222 78L78 222"/>
       <path class="globe-line" d="M95 58c-22 30-30 60-30 92s8 62 30 92M205 58c22 30 30 60 30 92s-8 62-30 92"/>
