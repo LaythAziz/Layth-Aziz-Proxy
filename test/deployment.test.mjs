@@ -13,6 +13,6 @@ test("Vercel serves the static dashboard from site and keeps root API functions 
 test("GitHub Actions workflow validates and builds without publishing the admin dashboard to Pages", async () => {
   const workflow = await readFile(new URL("../.github/workflows/build.yml", import.meta.url), "utf8");
   assert.match(workflow, /npm test/);
-  assert.match(workflow, /docker/build-push-action/);
+  assert.match(workflow, /docker\\/build-push-action/);
   assert.doesNotMatch(workflow, /deploy-pages|upload-pages-artifact|pages: write/);
 });
