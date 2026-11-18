@@ -99,7 +99,8 @@ test("public dashboard exposes proxy health analytics, search, and advanced filt
   for (const id of ["statsPanel", "statResponsive", "statFavorites", "proxySearch", "settingsDialog", "refreshInterval", "autoRefreshToggle"]) {
     assert.ok(html.includes(`id="${id}"`), "missing dashboard feature: " + id);
   }
-  assert.doesNotMatch(html, /statSources|regionFilter|مصدر عام|المصادر المتاحة/);\n  assert.match(html, /navigator\\.clipboard/);
+  assert.doesNotMatch(html, /statSources|regionFilter|مصدر عام|المصادر المتاحة/);
+  assert.match(html, /navigator\.clipboard/);
   assert.match(html, /lap_settings_v1/);
   assert.match(html, /function updateDashboardStats/);
   assert.doesNotMatch(html, /id="statUpdated"|آخر تحديث للقائمة/);
