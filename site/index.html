@@ -253,13 +253,17 @@ let proxies=[],favorites=new Set(read(K.fav,[])),showFavorites=false;
 function statusText(s){status.replaceChildren();const dot=document.createElement("span");dot.className="status-indicator";const t=document.createElement("span");t.textContent=translateText(s);status.append(dot,t);applyLanguage()}
 function timeLabel(v){if(!v)return currentLanguage==="ar"?"غير معروف":"Unknown";const d=new Date(v);return Number.isNaN(d.getTime())?(currentLanguage==="ar"?"غير معروف":"Unknown"):d.toLocaleString(currentLanguage==="ar"?"ar-IQ":"en-US",{dateStyle:"short",timeStyle:"short"})}
 function updateCounts(){$("onlineCount").textContent=String(proxies.length);$("favoriteCount").textContent=String(favorites.size);updateDashboardStats()}
+function renderNetworkMap(){
+  const count=proxies.length;
+  $("mapStatus").textContent=currentLanguage==="ar"?("استجاب "+count+" بروكسي • المواقع الجغرافية غير محددة"):(count+" proxies responded • geographic locations unavailable");
+}
 function updateDashboardStats(){
   const sources=window.lastProxyMeta||{};
   $("statResponsive").textContent=String(proxies.length);
   $("statSources").textContent=(sources.sources_ok??"—")+"/"+(sources.sources_total??"—");
   $("statFavorites").textContent=String(favorites.size);
   $("statUpdated").textContent=proxies.length?timeLabel(proxies[0]?.checked_at):"—";
-  $("mapStatus").textContent=currentLanguage==="ar"?("استجاب "+proxies.length+" بروكسي • المواقع الجغرافية غير محددة"): (proxies.length+" proxies responded • geographic locations unavailable");
+  renderNetworkMap();
 }
 function applySettings(){
   $("autoRefreshToggle").checked=savedSettings.auto!==false;
