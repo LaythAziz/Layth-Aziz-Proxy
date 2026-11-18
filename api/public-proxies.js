@@ -8,24 +8,27 @@ const SOURCES = [
 ];
 
 async function fetchCandidates() {
-  const candidates = [];
-  const seen = new Set();
-  for (const source of SOURCES) {
+  const feeds = await Promise.all(SOURCES.map(async source => {
     try {
       const response = await fetch(source, {
-        signal: AbortSignal.timeout(6500),
+        signal: AbortSignal.timeout(5500),
         headers: { "User-Agent": "LaythAzizProxy/2.0", "Accept": "text/plain" }
       });
-      if (!response.ok) continue;
-      const rows = parsePublicProxyList(await response.text(), { limit: 80 });
-      for (const row of rows) {
-        if (seen.has(row.id)) continue;
-        seen.add(row.id);
-        candidates.push({ ...row, source: new URL(source).hostname });
-      }
-    } catch { /* move to the next public feed */ }
+      if (!response.ok) return [];
+      return parsePublicProxyList(await response.text(), { limit: 80 })
+        .map(row => ({ ...row, source: new URL(source).hostname }));
+    } catch { return []; }
+  }));
+  const candidates = [];
+  const seen = new Set();
+  for (const rows of feeds) {
+    for (const row of rows) {
+      if (seen.has(row.id)) continue;
+      seen.add(row.id);
+      candidates.push(row);
+    }
   }
-  return candidates.slice(0, 40);
+  return candidates.slice(0, 32);
 }
 
 async function probeCandidates(candidates) {
