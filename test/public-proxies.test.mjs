@@ -140,7 +140,9 @@ test("API only includes proxies whose TCP connection probe succeeded", async () 
   const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
   assert.match(api, /if \(result\.online\)/);
   assert.match(api, /return checked\.filter\(Boolean\)/);
-  assert.match(api, /tested_from: "Vercel server region"/);\n  assert.match(api, /MTProto req_pq_multi\/resPQ/);\n  assert.match(api, /probeMtproto\(proxy\.server, proxy\.port, proxy\.secret/);
+  assert.match(api, /tested_from: "Vercel server region"/);
+  assert.match(api, /MTProto req_pq_multi\/resPQ/);
+  assert.match(api, /probeMtproto\(proxy\.server, proxy\.port, proxy\.secret/);
 });
 
 
