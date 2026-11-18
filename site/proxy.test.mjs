@@ -64,6 +64,7 @@ test("site supports Arabic and English with a persistent language switch", async
   assert.match(html, /TELEGRAM PROXY/);
   assert.match(html, /Explore proxies|Explore Telegram proxies/);
   assert.match(html, /aria-label="Language"/);
+  assert.match(html, /location\.reload\(\)/);
 });
 
 test("language switching does not install a mutation observer or access storage unsafely", async () => {
@@ -93,14 +94,15 @@ test("complete bilingual interface translates every visible section and dynamic 
 });
 
 
-test("public dashboard exposes proxy health analytics, global map, search, and advanced filters", async () => {
+test("public dashboard exposes proxy health analytics, search, and advanced filters", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   for (const id of ["statsPanel", "statResponsive", "statSources", "statFavorites", "proxySearch", "regionFilter", "settingsDialog", "refreshInterval", "autoRefreshToggle"]) {
     assert.ok(html.includes(`id="${id}"`), "missing dashboard feature: " + id);
   }
   assert.match(html, /navigator\.clipboard/);
   assert.match(html, /lap_settings_v1/);
-  assert.match(html, /function updateDashboardStats/);\n  assert.doesNotMatch(html, /id="statUpdated"|آخر تحديث للقائمة/);
+  assert.match(html, /function updateDashboardStats/);
+  assert.doesNotMatch(html, /id="statUpdated"|آخر تحديث للقائمة/);
   assert.doesNotMatch(html, /networkMap|mapStatus|renderNetworkMap|statUpdated|آخر تحديث/);
 });
 
