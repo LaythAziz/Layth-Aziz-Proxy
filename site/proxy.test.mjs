@@ -158,8 +158,9 @@ test("every static Arabic interface label has an English translation", async () 
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   const dictionary = html.slice(html.indexOf("const translations="), html.indexOf("const reverseTranslations="));
   const markup = html.slice(html.indexOf("<body>"), html.indexOf('<script type="module">'));
-  const textNodes = [...markup.matchAll(/>([^<>]+)</g)].map(match => match[1].trim()).filter(value => /[\\u0600-\\u06FF]/.test(value));
-  const attributes = [...markup.matchAll(/(?:aria-label|placeholder|alt)="([^"]*[\\u0600-\\u06FF][^"]*)"/g)].map(match => match[1]);
+  const hasArabic = value => [...value].some(char => char.codePointAt(0) >= 0x0600 && char.codePointAt(0) <= 0x06ff);
+  const textNodes = [...markup.matchAll(/>([^<>]+)</g)].map(match => match[1].trim()).filter(hasArabic);
+  const attributes = [...markup.matchAll(/(?:aria-label|placeholder|alt)="([^"]*)"/g)].map(match => match[1]).filter(hasArabic);
   const missing = [...new Set([...textNodes, ...attributes].filter(value => !dictionary.includes('"'+value+'"')))];
   assert.deepEqual(missing, []);
 });
