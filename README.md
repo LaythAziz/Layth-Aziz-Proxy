@@ -60,17 +60,13 @@ The Compose file publishes the configured host TCP port to container TCP port 84
 - https://github.com/TelegramMessenger/MTProxy
 
 
-## GitHub Pages control panel
+## Static control panel
 
-The Arabic control panel lives in `site/`. GitHub Actions runs its Node.js tests and publishes the static site to GitHub Pages after pushes to `main`.
+The Arabic control panel lives in `site/`. GitHub Actions runs automated tests and builds the MTProxy container image. It does not publish the dashboard.
 
 The panel generates a Telegram `tg://proxy` link locally in the visitor's browser from a server address, TCP port, and 32-character hex secret. It does not transmit or store the secret. **It does not create, host, or activate a proxy server.** A real MTProxy process must already be running on a reachable public server before its link can connect.
 
-After the first successful Pages deployment, the site URL is normally:
-
-`https://laythaziz.github.io/Layth-Aziz-Proxy/`
-
-If Pages is not enabled yet, open repository Settings → Pages and choose GitHub Actions as the build and deployment source.
+The production dashboard is intended to be deployed on Vercel. The repository includes `vercel.json` with `site/` as the static output directory and root-level `api/` serverless functions.
 
 
 ## Vercel admin API (registry and TCP checks)
@@ -86,13 +82,13 @@ The repository includes a Vercel-compatible API for an authenticated proxy regis
 - `HETZNER_API_TOKEN`: Hetzner Cloud API token with permission to create, power on/off, and delete servers. Keep it only in Vercel environment variables.
 - Optional: `HETZNER_LOCATION` (default `fsn1`), `HETZNER_SERVER_TYPE` (default `cx22`), and `HETZNER_IMAGE` (default `ubuntu-24.04`).
 
-Run the SQL in `supabase/mtproxy_instances.sql` in the Supabase SQL editor, then add all four values in Vercel → Project Settings → Environment Variables and redeploy. Do not commit real credentials.
+Run the SQL in `supabase/mtproxy_instances.sql` in a dedicated Supabase project, then add the five required values above in Vercel → Project Settings → Environment Variables and redeploy. Do not commit real credentials.
 
 ### Cloud provisioning
 
 The dashboard can now request a real Hetzner Cloud server when `HETZNER_API_TOKEN` is configured. For each new proxy it generates a cryptographically random MTProto secret and an available high TCP port, asks Hetzner to create an Ubuntu server in the selected location, obtains the server's assigned public IPv4 address, and boots MTProxy through cloud-init + systemd (automatic restart enabled). The secret is encrypted in Supabase and returned to the admin once with the Telegram deep link.
 
-The API can start, stop, check TCP reachability, and delete a provisioned Hetzner server. Deleting a manually registered external server still deletes only its registry record.
+The API can start, stop, check TCP reachability, recover the Telegram link for an authorized admin, and delete a provisioned Hetzner server. Deleting a manually registered external server still deletes only its registry record.
 
 **Important:** Hetzner is a paid cloud provider. Creating a server can incur charges and requires the owner's Hetzner account and API token. A public IP is assigned by the provider; it is never fabricated by the app. A newly created server may need several minutes to compile MTProxy and finish booting. TCP reachability is not a complete Telegram MTProto handshake test.
 
