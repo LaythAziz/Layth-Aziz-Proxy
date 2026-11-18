@@ -15,17 +15,18 @@ async function fetchCandidates() {
   const feeds = await Promise.all(SOURCES.map(async source => {
     try {
       const response = await fetch(source, {
-        signal: AbortSignal.timeout(6500),
+        signal: AbortSignal.timeout(4500),
         headers: { "User-Agent": "LaythAzizProxy/2.1", "Accept": "text/plain" }
       });
       if (!response.ok) return null;
-      return { source: new URL(source).hostname, content: await response.text() };
+      const content = await response.text();
+      return { source: new URL(source).hostname, content: content.slice(0, 250000) };
     } catch { return null; }
   }));
   const availableFeeds = feeds.filter(Boolean);
   if (!availableFeeds.length) throw new Error("All public proxy feeds are unavailable");
   return {
-    candidates: mergeProxyFeeds(availableFeeds, { limit: 240, perFeedLimit: 160 }),
+    candidates: mergeProxyFeeds(availableFeeds, { limit: 120, perFeedLimit: 80 }),
     sources_ok: availableFeeds.length,
     sources_total: SOURCES.length
   };
@@ -34,11 +35,11 @@ async function fetchCandidates() {
 async function probeCandidates(candidates) {
   const checked = [];
   let cursor = 0;
-  const workers = Array.from({ length: 20 }, async () => {
+  const workers = Array.from({ length: 12 }, async () => {
     while (cursor < candidates.length) {
       const index = cursor++;
       const proxy = candidates[index];
-      const result = await probeTcp(proxy.server, proxy.port, { timeoutMs: 900 });
+      const result = await probeTcp(proxy.server, proxy.port, { timeoutMs: 750, dnsTimeoutMs: 700 });
       if (result.online) checked[index] = {
         ...proxy,
         online: true,
@@ -57,7 +58,7 @@ export default async function handler(req, res) {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ error: "Method not allowed" });
   }
-  res.setHeader("Cache-Control", "s-maxage=30, stale-while-revalidate=60");
+  res.setHeader("Cache-Control", "s-maxage=45, stale-while-revalidate=120");
   try {
     const { candidates, sources_ok, sources_total } = await fetchCandidates();
     const proxies = await probeCandidates(candidates);
