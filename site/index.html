@@ -1,154 +1,158 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080d18">
-<meta name="description" content="LAYTH AZIZ PROXY — لوحة إعداد وربط MTProto Proxy مع Telegram">
-<title>LAYTH AZIZ PROXY</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#070b14">
+<meta name="description" content="LAYTH AZIZ PROXY — قائمة بروكسيات Telegram العامة مع فحص الاتصال وزمن الاستجابة.">
+<title>LAYTH AZIZ PROXY | اتصال أسرع</title>
 <style>
-:root{color-scheme:dark;--bg:#080d18;--panel:#101a2b;--line:#22324a;--muted:#9aabc2;--text:#f4f7fb;--cyan:#57d9e8;--green:#56d6a0;--red:#ff9a9a}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -15%,#173653 0,transparent 45%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
-.wrap{width:min(960px,calc(100% - 32px));margin:auto;padding:28px 0 56px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border:1px solid #326077;border-radius:14px;display:grid;place-items:center;color:var(--cyan);font-weight:900;letter-spacing:-2px;background:#10283a}.brand strong{display:block;letter-spacing:1.2px}.brand small,.muted{color:var(--muted)}.pill{font-size:12px;border:1px solid #6b5930;color:#f4cd78;padding:7px 11px;border-radius:99px;white-space:nowrap}
-.hero{padding:34px 0 24px}.eyebrow{color:var(--cyan);font-size:12px;letter-spacing:2px;font-weight:800}.hero h1{font-size:clamp(30px,6vw,52px);line-height:1.12;margin:12px 0}.hero p{max-width:650px;color:var(--muted);line-height:1.9;margin:0}
-.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:start}.card{background:linear-gradient(145deg,#121e31,#0d1625);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 18px 55px #0003}.card h2{font-size:18px;margin:0 0 7px}.card>p{font-size:13px;color:var(--muted);line-height:1.8;margin:0 0 20px}
-label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:100%;background:#080f1c;border:1px solid #2b3d57;color:white;border-radius:11px;padding:14px;font:inherit;outline:none;direction:ltr;text-align:left}input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #57d9e81a}.fieldrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.secretrow{display:flex;gap:8px}.secretrow input{min-width:0}.btn{border:0;border-radius:11px;padding:13px 16px;font:inherit;font-weight:750;cursor:pointer;transition:.18s}.btn:active{transform:scale(.98)}.btn-primary{background:var(--cyan);color:#06202a}.btn-dark{background:#1b2a40;color:#e7f2ff;border:1px solid #344963}.btn:disabled{opacity:.45;cursor:not-allowed}.wide{width:100%;margin-top:16px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.cloud-panel{margin-bottom:18px}.secondary-tools{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}.secondary-tools summary,.legacy-tools summary{cursor:pointer;color:var(--cyan);font-weight:700;font-size:14px;padding:8px 0}.legacy-tools{margin-top:18px}.legacy-tools .grid{margin-top:14px}.note{border:1px solid #594d2d;background:#2b2518;color:#f1d69a;border-radius:12px;padding:13px;font-size:12px;line-height:1.8;margin-top:16px}.status{display:flex;align-items:center;gap:9px;font-size:13px;color:#f3ce83;margin:16px 0}.dot{width:8px;height:8px;border-radius:50%;background:#e7b85d;box-shadow:0 0 12px #e7b85d80}
-.steps{display:grid;gap:14px}.step{display:flex;gap:12px;align-items:flex-start}.num{flex:none;width:28px;height:28px;border-radius:9px;background:#18394a;color:var(--cyan);display:grid;place-items:center;font-weight:800;font-size:13px}.step b{font-size:13px}.step p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.7}
-.output{display:none;margin-top:16px;padding:14px;background:#081522;border:1px solid #24536a;border-radius:13px;overflow-wrap:anywhere;direction:ltr;text-align:left;font-size:12px;line-height:1.8}.output.show{display:block}.small{font-size:11px;color:var(--muted);line-height:1.8}.public-proxy{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;margin-top:9px}.public-proxy .endpoint{direction:ltr;text-align:left;overflow-wrap:anywhere;font-size:12px}.public-proxy .btn{white-space:nowrap}.footer{margin-top:24px;text-align:center;color:#75869d;font-size:11px}
-@media(max-width:720px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.hero{padding-top:22px}.card{padding:18px}.fieldrow{grid-template-columns:1fr 1fr}}@media(max-width:390px){.fieldrow{grid-template-columns:1fr}.pill{white-space:normal;text-align:center}}
+:root{color-scheme:dark;--bg:#070b14;--panel:#0e1727;--panel2:#111f32;--line:#20334d;--muted:#93a6bf;--text:#f3f7ff;--cyan:#62e5e8;--blue:#6e9dff;--green:#52dda2;--red:#ff7f91;--amber:#f4c76b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 12% 0%,#16364b88,transparent 34%),radial-gradient(ellipse at 95% 28%,#162a5380,transparent 38%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.12;background-image:linear-gradient(#7893b51a 1px,transparent 1px),linear-gradient(90deg,#7893b51a 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,#000,transparent 75%)}
+.wrap{width:min(1080px,calc(100% - 34px));margin:auto;padding:26px 0 48px;position:relative}
+header{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#183b51,#122139);border:1px solid #39627b;color:var(--cyan);font-weight:950;letter-spacing:-2px;box-shadow:0 0 35px #62e5e822}
+.brand-name{font-size:14px;font-weight:900;letter-spacing:1.5px}.brand-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.live{display:flex;align-items:center;gap:8px;color:#b8f8dc;border:1px solid #235541;background:#10281f;padding:9px 13px;border-radius:99px;font-size:11px}
+.live:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.hero{padding:76px 0 46px;max-width:800px}
+.eyebrow{font-size:11px;color:var(--cyan);font-weight:850;letter-spacing:2.8px}
+h1{font-size:clamp(38px,7vw,76px);line-height:1.08;letter-spacing:-2.4px;margin:16px 0 18px;font-weight:950}
+.gradient{background:linear-gradient(100deg,#fff 10%,#79f0ed 48%,#82a9ff 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:650px;color:var(--muted);font-size:15px;line-height:2;margin:0}
+.hero-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:26px}
+.btn{border:0;border-radius:13px;padding:13px 18px;font:inherit;font-size:13px;font-weight:850;cursor:pointer;transition:transform .22s,box-shadow .22s,background .22s}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.97)}.btn:disabled{opacity:.55;cursor:wait;transform:none}
+.primary{background:linear-gradient(110deg,var(--cyan),#8cbbff);color:#071421;box-shadow:0 9px 30px #62e5e826}.secondary{color:#dce9ff;background:#15243a;border:1px solid #2b405e}
+.micro{font-size:11px;color:var(--muted)}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:24px 0 17px}
+.section-head h2{font-size:22px;margin:0 0 6px}.section-head p{margin:0;color:var(--muted);font-size:12px;line-height:1.8}
+.controls{display:flex;gap:8px;flex-wrap:wrap}
+select{background:#101b2c;color:#eaf3ff;border:1px solid #2b405e;border-radius:11px;padding:10px 12px;font:inherit;font-size:12px}
+.statusbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line);background:#0d1726cc;border-radius:15px;padding:13px 15px;color:var(--muted);font-size:11px;line-height:1.7}
+.statusbar strong{color:#eaf5ff}.status-indicator{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px #f4c76b66;flex:none}
+.proxy-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:14px}
+.proxy-card{position:relative;overflow:hidden;padding:19px;border:1px solid #233650;border-radius:19px;background:linear-gradient(145deg,#132138f2,#0c1524f2);box-shadow:0 12px 35px #0003;transition:border-color .25s,transform .25s,box-shadow .25s}
+.proxy-card:hover{border-color:#4b91a8;transform:translateY(-3px);box-shadow:0 18px 42px #0005}
+.proxy-card:after{content:"";position:absolute;inset:0 auto 0 0;width:2px;background:linear-gradient(transparent,var(--cyan),transparent);opacity:.6}
+.card-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.country{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:850}
+.flag{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#1b2e48;color:var(--cyan);font-size:17px}
+.online{font-size:10px;color:#a7f4d1;background:#123325;border:1px solid #245c43;border-radius:99px;padding:6px 9px}
+.endpoint{direction:ltr;text-align:left;color:#9db4d0;font:12px ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere;margin:15px 0 13px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.metric{background:#0a1422;border:1px solid #1d3049;border-radius:12px;padding:10px}
+.metric small{display:block;color:#8095b0;font-size:10px;margin-bottom:5px}.metric b{font-size:14px;font-variant-numeric:tabular-nums}
+.metric .ping{color:var(--green)}
+.card-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}
+.card-bottom .btn{padding:10px 13px;font-size:11px}
+.source{color:#7187a4;font-size:10px;direction:ltr;text-align:left}
+.empty{grid-column:1/-1;text-align:center;padding:34px 18px;border:1px dashed #2b405e;border-radius:18px;color:var(--muted);line-height:2;font-size:13px}
+.skeleton{height:174px;border-radius:18px;background:linear-gradient(100deg,#101a2a 20%,#1b2c43 38%,#101a2a 58%);background-size:200% 100%;animation:shimmer 1.35s linear infinite}
+@keyframes shimmer{to{background-position-x:-200%}}
+.info{margin-top:20px;padding:15px 17px;border:1px solid #4b4028;background:#201c15;border-radius:14px;color:#ddc995;font-size:11px;line-height:2}
+.info strong{color:#ffe5a5}
+.footer{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-top:32px;padding-top:18px;border-top:1px solid #1c2a3e;color:#6f829c;font-size:10px}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.visible{opacity:1;transform:none}
+.mask-reveal{animation:maskReveal 1s cubic-bezier(.2,.7,.2,1) both}
+@keyframes maskReveal{from{clip-path:inset(0 0 100% 0);transform:translateY(18px)}to{clip-path:inset(0 0 0 0);transform:none}}
+.stagger>*{opacity:0;animation:stagger .55s ease forwards}
+.stagger>*:nth-child(1){animation-delay:.05s}.stagger>*:nth-child(2){animation-delay:.12s}.stagger>*:nth-child(3){animation-delay:.19s}.stagger>*:nth-child(4){animation-delay:.26s}.stagger>*:nth-child(5){animation-delay:.33s}.stagger>*:nth-child(6){animation-delay:.4s}
+@keyframes stagger{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.whip-pan{animation:whipPan .8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes whipPan{from{opacity:0;transform:translateX(-48px) skewX(-8deg);filter:blur(7px)}to{opacity:1;transform:none;filter:none}}
+.slice{position:relative;overflow:hidden}.slice:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent,#a6faff55,transparent);transform:translateX(130%);animation:sliceSweep 1.1s .25s ease-out both;pointer-events:none}
+@keyframes sliceSweep{to{transform:translateX(-130%)}}
+.zoom-through{animation:zoomThrough .85s cubic-bezier(.16,.8,.2,1) both}
+@keyframes zoomThrough{from{opacity:0;transform:scale(.82);filter:blur(9px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
+@media(max-width:700px){.hero{padding:58px 0 30px}.proxy-grid{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}.wrap{width:min(100% - 26px,600px)}h1{letter-spacing:-1.5px}.proxy-card{padding:16px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
 </style>
 </head>
-<body><main class="wrap">
-<header class="top"><div class="brand"><div class="logo">LA</div><div><strong>LAYTH AZIZ PROXY</strong><small>MTProto Control Panel</small></div></div><div class="pill">لوحة الإدارة</div></header>
-<section class="hero"><div class="eyebrow">LAYTH AZIZ • MTPROTO MANAGEMENT</div><h1>إدارة بروكسيات Telegram<br>من مكان واحد.</h1><p>أنشئ سيرفرات MTProto سحابية، تابع حالة الاتصال، وتحكّم بالتشغيل والحذف. إنشاء السيرفر يتطلب حساب استضافة ومفاتيح إعداد آمنة.</p></section>
-<section class="card" style="margin-bottom:18px">
-  <h2>بروكسيات عالمية جاهزة</h2>
-  <p>اجلب روابط MTProto عامة من قوائم مجتمعية تتحدث باستمرار، وافتحها مباشرة في Telegram. لا تحتاج إلى حساب VPS أو مفاتيح استضافة لاستخدام هذه القائمة.</p>
-  <button class="btn btn-primary wide" id="loadPublicProxies" type="button" style="margin-top:0">جلب بروكسيات عالمية الآن</button>
-  <div id="publicProxyStatus" class="small" role="status" aria-live="polite" style="margin-top:12px">اضغط لجلب البروكسيات المتاحة حالياً…</div>
-  <div id="publicProxyList" style="margin-top:12px"></div>
-  <div class="note">هذه بروكسيات عامة يديرها أشخاص آخرون وليست مملوكة لك. قد تتوقف أو تكون بطيئة، ومشغّل البروكسي قد يرى عنوان IP وبيانات الاتصال الوصفية؛ لا تستخدم بروكسي مجهولاً للأنشطة الحساسة.</div>
-</section>
-<section class="card cloud-panel">
-  <h2>إدارة البروكسيات السحابية</h2>
-  <p>هذا الخيار لإنشاء سيرفر خاص تملكه أنت عبر مزوّد استضافة مدفوع. إذا تريد بروكسي جاهزاً مجانياً استخدم قائمة البروكسيات العالمية أعلاه.</p>
-  <label for="cloudName">اسم البروكسي الجديد</label>
-  <input id="cloudName" value="Layth Proxy" maxlength="60" />
-  <label for="cloudLocation">موقع السيرفر</label>
-  <select id="cloudLocation" style="width:100%;background:#080f1c;border:1px solid #2b3d57;color:white;border-radius:11px;padding:14px;font:inherit">
-    <option value="fsn1">ألمانيا — Falkenstein</option>
-    <option value="nbg1">ألمانيا — Nuremberg</option>
-    <option value="hel1">فنلندا — Helsinki</option>
-    <option value="ash">الولايات المتحدة — Ashburn</option>
-    <option value="hil">الولايات المتحدة — Hillsboro</option>
-    <option value="sin">سنغافورة — Singapore</option>
-  </select>
-  <button class="btn btn-primary wide" id="provisionProxy" type="button">إنشاء سيرفر خاص (يتطلب استضافة)</button>
-  <div id="provisionResult" class="output" dir="ltr"></div>
-  <div class="note">يتطلب إنشاء السيرفر ربط HETZNER_API_TOKEN. قد تُحتسب رسوم استضافة. لا يتم عرض IP إلا بعد تخصيصه فعلياً من المزوّد.</div>
-  <label for="adminToken">رمز الإدارة الخاص</label>
-  <input id="adminToken" type="password" autocomplete="off" placeholder="ADMIN_API_TOKEN" />
-  <p class="small">يُحفظ الرمز في جلسة هذا التبويب فقط، ويمكن مسحه من زر مسح المفتاح.</p>
-  <div class="actions"><button class="btn btn-dark" id="loadProxies" type="button">تحديث القائمة</button><button class="btn btn-dark" id="clearToken" type="button">مسح المفتاح</button></div>
-  <div class="note" style="margin-top:14px">لربط الإدارة تحتاج إعداد Supabase ومفاتيح البيئة في Vercel. لا تضع أي مفتاح سري داخل ملفات GitHub.</div>
-  <div style="height:1px;background:var(--line);margin:20px 0"></div>
-  <details class="secondary-tools"><summary>إضافة سيرفر خارجي موجود مسبقاً</summary>
-  <div class="fieldrow">
-    <div><label for="proxyName">اسم البروكسي</label><input id="proxyName" placeholder="My Telegram Proxy" /></div>
-    <div><label for="proxyHost">IP أو Domain</label><input id="proxyHost" placeholder="203.0.113.10" /></div>
-  </div>
-  <div class="fieldrow">
-    <div><label for="proxyPort">المنفذ</label><input id="proxyPort" value="443" inputmode="numeric" /></div>
-    <div><label for="proxySecret">Secret</label><input id="proxySecret" type="password" placeholder="32 hex characters" /></div>
-  </div>
-  <button class="btn btn-primary wide" id="registerProxy" type="button">حفظ بيانات السيرفر</button></details>
-  <div id="adminMessage" class="small" role="status" aria-live="polite" style="margin-top:12px"></div>
-  <div id="proxyList" class="steps" style="margin-top:18px"></div>
-</section>
-<details class="legacy-tools"><summary>أدوات إضافية: إنشاء رابط يدوي ومعلومات تشغيل</summary><div class="grid">
-<section class="card"><h2>إعداد اتصال البروكسي</h2><p>هذه اللوحة تنشئ رابط تيليجرام للإعدادات التي أدخلتها؛ لا تنشئ سيرفر MTProxy بحد ذاتها.</p>
-<label for="server">عنوان السيرفر (IP أو Domain)</label><input id="server" autocomplete="off" spellcheck="false" placeholder="مثال: 203.0.113.10">
-<div class="fieldrow"><div><label for="port">المنفذ TCP</label><input id="port" inputmode="numeric" value="443" placeholder="443"></div><div><label for="secret">Secret (32 خانة)</label><input id="secret" type="password" autocomplete="off" spellcheck="false" placeholder="32 hex characters"></div></div>
-<div class="actions"><button class="btn btn-dark" id="generate" type="button">توليد Secret آمن</button><button class="btn btn-dark" id="reveal" type="button">إظهار / إخفاء</button></div>
-<button class="btn btn-primary wide" id="create" type="button">إنشاء رابط Telegram</button>
-<div id="message" class="small" role="status" aria-live="polite" style="margin-top:12px"></div>
-<div id="output" class="output" dir="ltr"><div id="link"></div><div class="actions"><button class="btn btn-dark" id="copy" type="button">نسخ الرابط</button><button class="btn btn-primary" id="open" type="button">فتح Telegram</button></div></div>
-<div class="note">تنبيه أمني: رابط Telegram يحتوي على Secret الخاص بالبروكسي. لا تشاركه إلا مع من تريد السماح له باستخدامه.</div>
-</section>
-<aside class="card"><h2>كيف تعمل الخدمة؟</h2><p>هذه معلومات توضيحية وليست حالة اتصال مباشرة.</p><div class="steps">
-<div class="step"><span class="num">1</span><div><b>توفير سيرفر متصل</b><p>نحتاج Linux host دائم مع منفذ TCP عام مفتوح ووصول إلى Telegram.</p></div></div>
-<div class="step"><span class="num">2</span><div><b>تشغيل MTProxy</b><p>نستخدم ملفات Docker الموجودة في مستودع المشروع ونضبط Secret على السيرفر فقط.</p></div></div>
-<div class="step"><span class="num">3</span><div><b>إنشاء رابط Telegram</b><p>بعد التأكد من IP والمنفذ والسر، ننشئ الرابط ونختبر الاتصال فعلياً.</p></div></div></div>
-<hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+<body>
+<main class="wrap">
+<header class="whip-pan">
+  <div class="brand"><div class="brand-mark">LA</div><div><div class="brand-name">LAYTH AZIZ PROXY</div><div class="brand-sub">GLOBAL TELEGRAM CONNECTIONS</div></div></div>
+  <div class="live">فحص مباشر</div>
+</header>
 
-<p class="small" style="margin-top:12px">GitHub Actions هنا للبناء والاختبار والنشر فقط، وليس لتشغيل بروكسي دائم على مدار الساعة.</p></aside>
-</div></details>
+<section class="hero">
+  <div class="eyebrow mask-reveal">اتصال أوضح. اختيار أذكى.</div>
+  <h1 class="zoom-through">اعثر على <span class="gradient">أفضل اتصال</span><br>بخطوة واحدة.</h1>
+  <p class="reveal">قائمة بروكسيات Telegram العامة التي تستجيب للفحص حالياً، مرتبة حسب زمن الاستجابة. افحص المؤشرات أولاً ثم اختر البروكسي المناسب لك.</p>
+  <div class="hero-actions reveal"><button class="btn primary" id="refresh">فحص البروكسيات الآن <span aria-hidden="true">↗</span></button><span class="micro">يتم استبعاد العناوين التي لا تستجيب للفحص</span></div>
+</section>
 
-<footer class="footer">© LAYTH AZIZ • MTProto Control Panel • لا تشارك روابط البروكسي أو مفاتيح الإدارة</footer>
+<section id="directory">
+  <div class="section-head reveal">
+    <div><h2>شبكة البروكسيات العالمية</h2><p>المتاح حالياً فقط — الترتيب من الأقل زمناً إلى الأعلى</p></div>
+    <div class="controls">
+      <select id="sort" aria-label="ترتيب البروكسيات"><option value="fast">الأسرع أولاً</option><option value="slow">الأبطأ أولاً</option></select>
+      <select id="filter" aria-label="فلترة زمن الاستجابة"><option value="all">كل السرعات</option><option value="100">أقل من 100 ms</option><option value="250">أقل من 250 ms</option><option value="500">أقل من 500 ms</option></select>
+    </div>
+  </div>
+  <div class="statusbar reveal" id="status" role="status" aria-live="polite"><span class="status-indicator"></span><span>جاري تحميل البروكسيات وفحصها…</span></div>
+  <div class="proxy-grid" id="proxyGrid" aria-live="polite">
+    <div class="skeleton"></div><div class="skeleton"></div>
+  </div>
+  <div class="info reveal"><strong>ملاحظة مهمة عن الـPing:</strong> الرقم الظاهر هو زمن اتصال TCP من خادم الموقع إلى خادم البروكسي، وليس قياساً من هاتفك داخل العراق. قد يختلف الـPing الفعلي عندك حسب شركة الإنترنت وموقعك. نجاح TCP لا يضمن وحده أن جلسة Telegram ستكتمل.</div>
+</section>
+
+<footer class="footer"><span>© 2026 LAYTH AZIZ PROXY</span><span>خدمة مستقلة لا تدير أو تملك البروكسيات العامة المدرجة</span></footer>
 </main>
 <script type="module">
-import {buildTelegramProxyLink,generateSecret} from "./proxy.mjs";
-const $=id=>document.getElementById(id);let currentLink="";
-$("generate").addEventListener("click",()=>{try{$("secret").value=generateSecret();$("message").textContent="تم توليد Secret عشوائي آمن داخل جهازك.";}catch(e){$("message").textContent=e.message;}});
-$("reveal").addEventListener("click",()=>{$("secret").type=$("secret").type==="password"?"text":"password";});
-$("create").addEventListener("click",()=>{try{currentLink=buildTelegramProxyLink({server:$("server").value,port:$("port").value,secret:$("secret").value});$("link").textContent=currentLink;$("output").classList.add("show");$("message").textContent="تم إنشاء الرابط محلياً. تأكد أن السيرفر يعمل وأن المنفذ مفتوح.";}catch(e){$("output").classList.remove("show");$("message").textContent=e.message;}});
-$("copy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(currentLink);$("message").textContent="تم نسخ الرابط.";}catch{$("message").textContent="تعذر النسخ التلقائي؛ اضغط مطولاً على الرابط لنسخه.";}});
-$("open").addEventListener("click",()=>{if(currentLink)location.href=currentLink;});
-
-const publicProxyList=$("publicProxyList"), publicProxyStatus=$("publicProxyStatus");
-async function loadPublicProxies(){
-  const button=$("loadPublicProxies");button.disabled=true;button.textContent="جاري جلب القائمة…";publicProxyStatus.textContent="نتصل بمصادر البروكسيات العامة…";publicProxyList.replaceChildren();
+const $=id=>document.getElementById(id);
+const grid=$("proxyGrid"),status=$("status"),refresh=$("refresh");
+let proxies=[];
+function statusText(message){status.replaceChildren();const dot=document.createElement("span");dot.className="status-indicator";const label=document.createElement("span");label.textContent=message;status.append(dot,label);}
+function render(){
+  const max=$("filter").value,sort=$("sort").value;
+  let rows=proxies.filter(p=>max==="all"||p.latency_ms<Number(max));
+  rows.sort((a,b)=>sort==="fast"?a.latency_ms-b.latency_ms:b.latency_ms-a.latency_ms);
+  grid.replaceChildren();grid.classList.add("stagger");
+  if(!rows.length){const empty=document.createElement("div");empty.className="empty";empty.textContent=proxies.length?"لا توجد بروكسيات ضمن الفلتر المحدد. غيّر الفلتر لعرض نتائج أخرى.":"لم نعثر على بروكسيات استجابت للفحص الآن. حاول التحديث بعد قليل.";grid.append(empty);return;}
+  for(const proxy of rows){
+    const card=document.createElement("article");card.className="proxy-card slice";
+    const top=document.createElement("div");top.className="card-top";
+    const country=document.createElement("div");country.className="country";
+    const flag=document.createElement("span");flag.className="flag";flag.textContent="◎";
+    const region=document.createElement("span");region.textContent=proxy.region||"موقع غير محدد";
+    country.append(flag,region);
+    const badge=document.createElement("span");badge.className="online";badge.textContent="متصل بالفحص";
+    top.append(country,badge);
+    const endpoint=document.createElement("div");endpoint.className="endpoint";endpoint.textContent=proxy.server+":"+proxy.port;
+    const metrics=document.createElement("div");metrics.className="metrics";
+    const metric=(label,value,extra="")=>{const box=document.createElement("div");box.className="metric";const small=document.createElement("small");small.textContent=label;const strong=document.createElement("b");strong.className=extra;strong.textContent=value;box.append(small,strong);return box;};
+    metrics.append(metric("زمن TCP","~"+proxy.latency_ms+" ms","ping"),metric("الحالة","Online"),metric("المنفذ",String(proxy.port)));
+    const bottom=document.createElement("div");bottom.className="card-bottom";
+    const source=document.createElement("span");source.className="source";source.textContent=proxy.source||"Public feed";
+    const connect=document.createElement("button");connect.className="btn primary";connect.textContent="ربط Telegram";connect.addEventListener("click",()=>{location.href=proxy.telegram_link;});
+    bottom.append(source,connect);card.append(top,endpoint,metrics,bottom);grid.append(card);
+  }
+}
+async function load(){
+  refresh.disabled=true;refresh.textContent="جاري الفحص…";statusText("نجمع المصادر ونفحص المنافذ المتاحة…");
+  grid.replaceChildren();grid.classList.remove("stagger");
+  for(let i=0;i<4;i++){const sk=document.createElement("div");sk.className="skeleton";grid.append(sk);}
   try{
-    const response=await fetch("/api/public-proxies",{headers:{"Accept":"application/json"}});
+    const response=await fetch("/api/public-proxies",{headers:{Accept:"application/json"},cache:"no-store"});
     const data=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(data.error||"تعذر جلب القائمة");
-    for(const proxy of data.proxies||[]){
-      const row=document.createElement("div");row.className="public-proxy";
-      const endpoint=document.createElement("div");endpoint.className="endpoint";endpoint.textContent=proxy.server+":"+proxy.port;
-      const actions=document.createElement("div");actions.style.cssText="display:flex;gap:7px;flex-wrap:wrap";
-      const connect=document.createElement("button");connect.className="btn btn-primary";connect.textContent="اتصال";connect.onclick=()=>{location.href=proxy.telegram_link;};
-      const copy=document.createElement("button");copy.className="btn btn-dark";copy.textContent="نسخ";copy.onclick=async()=>{try{await navigator.clipboard.writeText(proxy.telegram_link);publicProxyStatus.textContent="تم نسخ رابط البروكسي.";}catch{publicProxyStatus.textContent="تعذر النسخ التلقائي؛ افتح زر الاتصال بدلاً منه.";}};
-      actions.append(connect,copy);row.append(endpoint,actions);publicProxyList.append(row);
-    }
-    publicProxyStatus.textContent="تم جلب "+(data.proxies||[]).length+" بروكسي عام. آخر تحديث: "+new Date(data.checked_at).toLocaleString("ar-IQ")+" • المصدر: "+new URL(data.source).hostname;
-  }catch(error){publicProxyStatus.textContent=error.message;}
-  finally{button.disabled=false;button.textContent="تحديث البروكسيات العالمية";}
+    proxies=Array.isArray(data.proxies)?data.proxies:[];
+    const checked=new Date(data.checked_at).toLocaleString("ar-IQ");
+    statusText("تم فحص "+proxies.length+" بروكسي مستجيب • "+checked+" • الفحص من خادم الموقع");
+    render();
+  }catch(error){proxies=[];statusText(error.message);render();}
+  finally{refresh.disabled=false;refresh.textContent="إعادة فحص البروكسيات ↗";}
 }
-$("loadPublicProxies").addEventListener("click",loadPublicProxies);
-loadPublicProxies();
-
-const adminToken=$("adminToken"), adminMessage=$("adminMessage"), proxyList=$("proxyList");
-adminToken.value=sessionStorage.getItem("laythProxyAdminToken")||"";
-function authHeaders(){const token=adminToken.value.trim();if(token)sessionStorage.setItem("laythProxyAdminToken",token);return {"Authorization":"Bearer "+token,"Content-Type":"application/json"};}
-async function api(path,options={}){const response=await fetch(path,{...options,headers:{...authHeaders(),...(options.headers||{})}});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||("HTTP "+response.status));return data;}
-function showProxyRows(items){proxyList.replaceChildren();if(!items.length){proxyList.textContent="لا توجد بروكسيات مسجّلة بعد.";return;}for(const item of items){const row=document.createElement("div");row.className="step";row.style.cssText="padding:13px;border:1px solid var(--line);border-radius:12px;display:block";const title=document.createElement("b");title.textContent=item.name+" — "+item.server+":"+item.port;const status=document.createElement("p");status.className="small";status.textContent="الحالة: "+item.status+" • "+(item.provider_name==="hetzner"?"سيرفر سحابي • "+(item.provider_location||""):"سيرفر خارجي")+" • زمن الاستجابة: "+(item.latency_ms==null?"غير مقاس":item.latency_ms+" ms")+" • آخر فحص: "+(item.last_check||"لم يُفحص");const actions=document.createElement("div");actions.className="actions";
-if(item.provider_name==="hetzner"){const power=document.createElement("button");power.className="btn btn-dark";power.textContent=item.status==="stopped"?"تشغيل السيرفر":"إيقاف السيرفر";power.onclick=async()=>{try{const action=item.status==="stopped"?"start":"stop";await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action})});adminMessage.textContent=action==="stop"?"تم إرسال أمر إيقاف السيرفر.":"تم إرسال أمر تشغيل السيرفر؛ انتظر اكتمال الإقلاع.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};actions.append(power);}
-const reveal=document.createElement("button");reveal.className="btn btn-dark";reveal.textContent="عرض رابط Telegram";reveal.onclick=async()=>{try{const r=await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action:"reveal-link"})});const link=document.createElement("p");link.className="small";link.dir="ltr";link.textContent=r.telegram_link;const copy=document.createElement("button");copy.className="btn btn-dark";copy.textContent="نسخ الرابط";copy.onclick=async()=>{try{await navigator.clipboard.writeText(r.telegram_link);adminMessage.textContent="تم نسخ رابط Telegram.";}catch{adminMessage.textContent="تعذر النسخ التلقائي؛ انسخ الرابط يدوياً.";}};row.append(link,copy);}catch(e){adminMessage.textContent=e.message;}};actions.append(reveal);
-if(item.provider_name==="hetzner"&&item.status!=="stopped"){const check=document.createElement("button");check.className="btn btn-dark";check.textContent="فحص TCP";check.onclick=async()=>{try{const r=await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action:"check"})});adminMessage.textContent=r.status==="online"?"المنفذ يستجيب • "+r.latency_ms+" ms":"المنفذ لا يستجيب. هذا فحص TCP وليس اختبار MTProto كامل.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};actions.append(check);}const del=document.createElement("button");del.className="btn btn-dark";del.textContent=item.provider_name==="hetzner"?"حذف البروكسي والسيرفر":"حذف السجل";del.onclick=async()=>{if(!confirm(item.provider_name==="hetzner"?"سيتم حذف السيرفر السحابي نهائياً وإيقاف البروكسي. هل تريد المتابعة؟":"حذف سجل هذا البروكسي؟"))return;try{await api("/api/proxies/"+encodeURIComponent(item.id),{method:"DELETE"});await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};actions.append(del);row.append(title,status,actions);proxyList.append(row);}}
-async function refreshProxies(){try{adminMessage.textContent="جاري تحميل القائمة…";const data=await api("/api/proxies");showProxyRows(data.proxies||[]);adminMessage.textContent="تم تحديث القائمة.";}catch(e){adminMessage.textContent=e.message;}}
-$("loadProxies").addEventListener("click",refreshProxies);
-$("clearToken").addEventListener("click",()=>{sessionStorage.removeItem("laythProxyAdminToken");adminToken.value="";adminMessage.textContent="تم مسح مفتاح الإدارة من جلسة المتصفح.";});
-$("provisionProxy").addEventListener("click",async()=>{
-  const button=$("provisionProxy"), result=$("provisionResult");
-  if(!confirm("سيتم إنشاء سيرفر سحابي حقيقي وقد تُفرض رسوم من مزوّد الاستضافة. هل تريد المتابعة؟"))return;
-  button.disabled=true;button.textContent="جاري إنشاء السيرفر…";result.classList.remove("show");
-  try{
-    const data=await api("/api/proxies",{method:"POST",body:JSON.stringify({action:"provision",name:$("cloudName").value,location:$("cloudLocation").value})});
-    const p=data.proxy;
-    result.replaceChildren();
-    const heading=document.createElement("strong");heading.textContent="تم استلام بيانات السيرفر الحقيقي";
-    const details=document.createElement("p");details.textContent="IP: "+p.server+" | TCP: "+p.port+" | Secret: "+p.secret+" | الموقع: "+p.provider_location+" | الحالة: جارٍ إعداد MTProxy";
-    const link=document.createElement("p");link.textContent=p.telegram_link;
-    const copy=document.createElement("button");copy.className="btn btn-dark";copy.textContent="نسخ رابط Telegram";copy.onclick=async()=>{try{await navigator.clipboard.writeText(p.telegram_link);adminMessage.textContent="تم نسخ رابط Telegram.";}catch{adminMessage.textContent="تعذر النسخ التلقائي؛ انسخ الرابط يدوياً."; }};
-    const open=document.createElement("button");open.className="btn btn-primary";open.textContent="فتح Telegram";open.onclick=()=>{location.href=p.telegram_link;};
-    const buttons=document.createElement("div");buttons.className="actions";buttons.append(copy,open);
-    result.append(heading,details,link,buttons);result.classList.add("show");
-    adminMessage.textContent=data.note||"تم إنشاء السيرفر.";
-    await refreshProxies();
-  }catch(e){adminMessage.textContent=e.message;result.textContent=e.message;result.classList.add("show");}
-  finally{button.disabled=false;button.textContent="توليد بروكسي وسيرفر حقيقي";}
-});
-$("registerProxy").addEventListener("click",async()=>{try{const body={name:$("proxyName").value,server:$("proxyHost").value,port:$("proxyPort").value,secret:$("proxySecret").value};await api("/api/proxies",{method:"POST",body:JSON.stringify(body)});$("proxySecret").value="";adminMessage.textContent="تم حفظ سجل السيرفر فقط. هذا لا ينشئ سيرفراً ولا يشغّل MTProxy.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}});
-
-</script></body></html>
+$("refresh").addEventListener("click",load);
+$("sort").addEventListener("change",render);$("filter").addEventListener("change",render);
+if("IntersectionObserver"in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("visible");observer.unobserve(entry.target);}}),{threshold:.12});document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));}else document.querySelectorAll(".reveal").forEach(el=>el.classList.add("visible"));
+load();
+</script>
+</body>
+</html>
