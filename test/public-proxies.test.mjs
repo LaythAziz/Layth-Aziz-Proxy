@@ -182,10 +182,7 @@ test("MTProto probe accepts only a matching req_pq_multi/resPQ nonce response", 
       message.writeBigUInt64LE((BigInt(Math.floor(Date.now() / 1000)) << 32n) + 4n, 8);
       message.writeUInt32LE(body.length, 16);
       body.copy(message, 20);
-      const framed = Buffer.alloc(4 + message.length + 4);
-      framed.writeUInt32LE(message.length + 4, 0);
-      message.copy(framed, 4);
-      randomBytes(4).copy(framed, 4 + message.length);
+      const framed = Buffer.concat([Buffer.from([message.length / 4]), message]);
       const serverCipher = createCipheriv("aes-256-ctr", key, iv);
       queueMicrotask(() => {
         socket.emit("data", serverCipher.update(framed));
