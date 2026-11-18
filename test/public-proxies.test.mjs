@@ -126,7 +126,7 @@ test("TCP probe exits promptly when a proxy hostname DNS lookup stalls", async (
 test("public proxy API does not serve stale cached entries after their verification window", async () => {
   const { readFile } = await import("node:fs/promises");
   const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
-  assert.match(api, /s-maxage=20, stale-while-revalidate=0/);
+  assert.match(api, /s-maxage=15, stale-while-revalidate=0/);
 });
 
 test("public page removes old proxy entries when a fresh verification request fails", async () => {
