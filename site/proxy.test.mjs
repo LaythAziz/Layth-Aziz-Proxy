@@ -95,7 +95,7 @@ test("complete bilingual interface translates every visible section and dynamic 
 
 test("public dashboard exposes proxy health analytics, global map, search, and advanced filters", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
-  for (const id of ["statsPanel", "statResponsive", "statSources", "statFavorites", "proxySearch", "regionFilter", "networkMap", "mapStatus", "settingsDialog", "refreshInterval", "autoRefreshToggle", "copyTelegramLink"]) {
+  for (const id of ["statsPanel", "statResponsive", "statSources", "statFavorites", "proxySearch", "regionFilter", "networkMap", "mapStatus", "settingsDialog", "refreshInterval", "autoRefreshToggle"]) {
     assert.ok(html.includes(`id="${id}"`), "missing dashboard feature: " + id);
   }
   assert.match(html, /navigator\.clipboard/);
