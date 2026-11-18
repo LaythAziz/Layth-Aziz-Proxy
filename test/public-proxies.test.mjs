@@ -24,3 +24,34 @@ test("does not return more than the requested maximum", () => {
   const lines = Array.from({length: 5}, (_, i) => `tg://proxy?server=p${i}.example&port=443&secret=0123456789abcdef0123456789abcdef`);
   assert.equal(parsePublicProxyList(lines.join("\n"), {limit: 3}).length, 3);
 });
+
+
+import { probeTcp } from "../lib/proxy-probe.js";
+import { EventEmitter } from "node:events";
+
+test("TCP probe reports latency only after a successful connection", async () => {
+  const result = await probeTcp("proxy.example", 443, {
+    timeoutMs: 50,
+    connect: () => {
+      const socket = new EventEmitter();
+      socket.destroy = () => {};
+      queueMicrotask(() => socket.emit("connect"));
+      return socket;
+    }
+  });
+  assert.equal(result.online, true);
+  assert.equal(typeof result.latency_ms, "number");
+});
+
+test("TCP probe marks refused connections offline without inventing latency", async () => {
+  const result = await probeTcp("proxy.example", 443, {
+    timeoutMs: 50,
+    connect: () => {
+      const socket = new EventEmitter();
+      socket.destroy = () => {};
+      queueMicrotask(() => socket.emit("error", new Error("refused")));
+      return socket;
+    }
+  });
+  assert.deepEqual(result, { online: false, latency_ms: null });
+});
