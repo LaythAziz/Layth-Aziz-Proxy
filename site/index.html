@@ -302,8 +302,8 @@ async function load({silent=false}={}){
     window.lastProxyMeta=data;
     checkDrops(proxies);
     const message=currentLanguage==="ar"
-      ?"تم تحديث "+proxies.length+" بروكسي تم فحصها"
-      :"Updated "+proxies.length+" proxies checked";
+      ?"تم فحص "+proxies.length+" بروكسي"
+      :"Checked "+proxies.length+" proxies";
     statusText(message);
     render();updateCounts();
   }catch(error){
