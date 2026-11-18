@@ -120,3 +120,25 @@ test("TCP probe exits promptly when a proxy hostname DNS lookup stalls", async (
   assert.deepEqual(result, { online: false, latency_ms: null });
   assert.ok(Date.now() - started < 250, "DNS timeout should be bounded");
 });
+
+
+test("public proxy API does not serve stale cached entries after their verification window", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
+  assert.match(api, /s-maxage=20, stale-while-revalidate=0/);
+});
+
+test("public page removes old proxy entries when a fresh verification request fails", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const html = await readFile(new URL("../site/index.html", import.meta.url), "utf8");
+  assert.match(html, /catch\(error\)\{\s*proxies=\[\];\s*window\.lastProxyMeta=null;/);
+  assert.match(html, /لم يمكن التحقق من البروكسيات الآن/);
+});
+
+test("API only includes proxies whose TCP connection probe succeeded", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
+  assert.match(api, /if\(result\.online\) checked\[index\]/);
+  assert.match(api, /return checked\.filter\(Boolean\)/);
+  assert.match(api, /tested_from: "Vercel server region"/);
+});
