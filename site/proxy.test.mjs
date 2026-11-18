@@ -130,10 +130,10 @@ test("public page keeps proxy cards lightweight and avoids per-card entrance ani
 
 test("proxy endpoint bounds DNS lookup and limits expensive feed probing", async () => {
   const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
-  const probe = await readFile(new URL("../lib/proxy-probe.js", import.meta.url), "utf8");
-  assert.match(api, /limit:\s*120/);
+  const probe = await readFile(new URL("../lib/mtproto-probe.js", import.meta.url), "utf8");
+  assert.match(api, /limit:\s*36/);
   assert.match(api, /length:\s*12/);
-  assert.match(probe, /DNS_TIMEOUT|dnsTimeoutMs/);
+  assert.match(probe, /dnsTimeoutMs/);\n  assert.match(api, /probeMtproto/);
 });
 
 
