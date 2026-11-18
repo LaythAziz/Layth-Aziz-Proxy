@@ -1,1 +1,9 @@
-Ignore local secrets and runtime files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa
+id_ed25519
+proxy-secret
+proxy-multi.conf

@@ -1,1 +1,25 @@
-Add Docker Compose deployment configuration
+services:
+  mtproxy:
+    build: .
+    container_name: layth-aziz-proxy
+    restart: unless-stopped
+    environment:
+      MT_PROXY_SECRET: ${MT_PROXY_SECRET:?Set MT_PROXY_SECRET in .env}
+      MT_PROXY_PORT: ${MT_PROXY_PORT:-443}
+      MT_PROXY_WORKERS: ${MT_PROXY_WORKERS:-1}
+    ports:
+      - "${MT_PROXY_PORT:-443}:8443/tcp"
+    volumes:
+      - mtproxy-data:/var/lib/mtproxy
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+    read_only: true
+    tmpfs:
+      - /tmp
+volumes:
+  mtproxy-data:
