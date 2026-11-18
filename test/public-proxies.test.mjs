@@ -142,3 +142,80 @@ test("API only includes proxies whose TCP connection probe succeeded", async () 
   assert.match(api, /return checked\.filter\(Boolean\)/);
   assert.match(api, /tested_from: "Vercel server region"/);
 });
+
+
+test("public proxy parser retains the secret for an end-to-end MTProto check", () => {
+  const secret = "0123456789abcdef0123456789abcdef";
+  const [proxy] = parsePublicProxyList(`tg://proxy?server=one.example&port=443&secret=${secret}`);
+  assert.equal(proxy.secret, secret);
+});
+
+test("MTProto probe accepts only a matching req_pq_multi/resPQ nonce response", async () => {
+  const { probeMtproto } = await import("../lib/mtproto-probe.js");
+  const { createHash, createCipheriv, randomBytes } = await import("node:crypto");
+  const { EventEmitter } = await import("node:events");
+  const secret = "0123456789abcdef0123456789abcdef";
+  const nonce = Buffer.from("00112233445566778899aabbccddeeff", "hex");
+  const writes = [];
+  const socket = new EventEmitter();
+  socket.destroy = () => {};
+  socket.setTimeout = () => {};
+  socket.write = data => {
+    writes.push(Buffer.from(data));
+    if (writes.length === 2) {
+      const initReversed = Buffer.from(writes[0]).reverse();
+      const key = createHash("sha256").update(Buffer.concat([initReversed.subarray(8, 40), Buffer.from(secret, "hex")])).digest();
+      const iv = initReversed.subarray(40, 56);
+      const body = Buffer.alloc(80);
+      body.writeUInt32LE(0x05162463, 0);
+      nonce.copy(body, 4);
+      randomBytes(16).copy(body, 20);
+      body[36] = 8;
+      randomBytes(8).copy(body, 37);
+      body.writeUInt32LE(0x1cb5c415, 48);
+      body.writeUInt32LE(3, 52);
+      randomBytes(24).copy(body, 56);
+      const message = Buffer.alloc(20 + body.length);
+      message.writeBigUInt64LE(0n, 0);
+      message.writeBigUInt64LE((BigInt(Math.floor(Date.now() / 1000)) << 32n) + 4n, 8);
+      message.writeUInt32LE(body.length, 16);
+      body.copy(message, 20);
+      const framed = Buffer.alloc(4 + message.length + 4);
+      framed.writeUInt32LE(message.length + 4, 0);
+      message.copy(framed, 4);
+      randomBytes(4).copy(framed, 4 + message.length);
+      const serverCipher = createCipheriv("aes-256-ctr", key, iv);
+      queueMicrotask(() => {
+        socket.emit("data", serverCipher.update(framed));
+      });
+    }
+    return true;
+  };
+  const result = await probeMtproto("proxy.example", 443, secret, {
+    timeoutMs: 200,
+    dnsTimeoutMs: 50,
+    nonce,
+    lookup: async () => [{ address: "8.8.8.8", family: 4 }],
+    connect: () => { queueMicrotask(() => socket.emit("connect")); return socket; }
+  });
+  assert.equal(result.online, true);
+  assert.equal(result.verification, "mtproto-respq");
+  assert.equal(writes[0].length, 64);
+  assert.ok(writes[1].length > 40);
+});
+
+test("MTProto probe rejects unsupported TLS secrets instead of publishing unverified links", async () => {
+  const { probeMtproto } = await import("../lib/mtproto-probe.js");
+  const result = await probeMtproto("proxy.example", 443, "ee" + "ab".repeat(16) + Buffer.from("example.com").toString("hex"));
+  assert.equal(result.online, false);
+  assert.equal(result.reason, "unsupported-secret-mode");
+});
+
+test("English language dictionary is built after all translations and never replaces missing text with a generic error", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const html = await readFile(new URL("../site/index.html", import.meta.url), "utf8");
+  assert.ok(html.indexOf("Object.assign(translations") < html.indexOf("const reverseTranslations="));
+  assert.doesNotMatch(html, /return "Please try again\."/);
+  assert.match(html, /"اجتاز مصافحة MTProto"/);
+  assert.match(html, /"MTProto handshake verified"/);
+});
