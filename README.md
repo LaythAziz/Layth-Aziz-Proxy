@@ -62,14 +62,14 @@ The Compose file publishes the configured host TCP port to container TCP port 84
 
 ## Static control panel
 
-The Arabic control panel lives in `site/`. GitHub Actions runs automated tests and builds the MTProxy container image. It does not publish the dashboard.
+The Arabic dashboard lives in `site/`. GitHub Actions runs automated tests and builds the MTProxy container image; it does not publish the dashboard.
 
-The panel generates a Telegram `tg://proxy` link locally in the visitor's browser from a server address, TCP port, and 32-character hex secret. It does not transmit or store the secret. **It does not create, host, or activate a proxy server.** A real MTProxy process must already be running on a reachable public server before its link can connect.
+The dashboard includes a manual link helper that creates a Telegram `tg://proxy` link in the browser, plus an authenticated cloud-management panel. When the required Vercel and Hetzner environment variables are configured, the API can provision a real Ubuntu server and install MTProxy. Without those credentials, the dashboard cannot create a server and must not display a fabricated IP or an online status.
 
 The production dashboard is intended to be deployed on Vercel. The repository includes `vercel.json` with `site/` as the static output directory and root-level `api/` serverless functions.
 
 
-## Vercel admin API (registry and TCP checks)
+## Vercel admin API (cloud provisioning and proxy management)
 
 The repository includes a Vercel-compatible API for an authenticated proxy registry. It can save records for servers you already control, encrypt their MTProto secrets at rest, run a TCP reachability check, and delete registry records. A TCP check is **not** a full MTProto handshake or proof that Telegram can use the proxy.
 
