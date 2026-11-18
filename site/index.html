@@ -39,7 +39,28 @@ label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:1
 <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
 <a href="https://github.com/LaythAziz/Layth-Aziz-Proxy" target="_blank" rel="noreferrer" style="color:var(--cyan);text-decoration:none;font-size:13px">فتح مستودع GitHub ↗</a>
 <p class="small" style="margin-top:12px">GitHub Actions هنا للبناء والاختبار والنشر فقط، وليس لتشغيل بروكسي دائم على مدار الساعة.</p></aside>
-</div><footer class="footer">© LAYTH AZIZ • Built for Telegram MTProto • No credentials are stored</footer>
+</div>
+<section class="card" style="margin-top:18px">
+  <h2>إدارة البروكسيات المسجّلة</h2>
+  <p>هذه الإدارة تحفظ بيانات الخوادم التي تملكها وتفحص منفذ TCP. لا تنشئ VPS أو MTProto تلقائياً بدون مزوّد استضافة مربوط.</p>
+  <label for="adminToken">مفتاح الإدارة (يبقى في جلسة المتصفح فقط)</label>
+  <input id="adminToken" type="password" autocomplete="off" placeholder="ADMIN_API_TOKEN" />
+  <div class="actions"><button class="btn btn-dark" id="loadProxies" type="button">تحديث القائمة</button><button class="btn btn-dark" id="clearToken" type="button">مسح المفتاح</button></div>
+  <div class="note" style="margin-top:14px">لربط الإدارة تحتاج إعداد Supabase ومفاتيح البيئة في Vercel. لا تضع أي مفتاح سري داخل ملفات GitHub.</div>
+  <div style="height:1px;background:var(--line);margin:20px 0"></div>
+  <h2 style="font-size:15px">تسجيل سيرفر موجود لديك</h2>
+  <div class="fieldrow">
+    <div><label for="proxyName">اسم البروكسي</label><input id="proxyName" placeholder="My Telegram Proxy" /></div>
+    <div><label for="proxyHost">IP أو Domain</label><input id="proxyHost" placeholder="203.0.113.10" /></div>
+  </div>
+  <div class="fieldrow">
+    <div><label for="proxyPort">المنفذ</label><input id="proxyPort" value="443" inputmode="numeric" /></div>
+    <div><label for="proxySecret">Secret</label><input id="proxySecret" type="password" placeholder="32 hex characters" /></div>
+  </div>
+  <button class="btn btn-primary wide" id="registerProxy" type="button">حفظ بيانات السيرفر</button>
+  <div id="adminMessage" class="small" role="status" aria-live="polite" style="margin-top:12px"></div>
+  <div id="proxyList" class="steps" style="margin-top:18px"></div>
+</section>\n<footer class="footer">© LAYTH AZIZ • Built for Telegram MTProto • No credentials are stored</footer>
 </main>
 <script type="module">
 import {buildTelegramProxyLink,generateSecret} from "./proxy.mjs";
@@ -48,5 +69,15 @@ $("generate").addEventListener("click",()=>{try{$("secret").value=generateSecret
 $("reveal").addEventListener("click",()=>{$("secret").type=$("secret").type==="password"?"text":"password";});
 $("create").addEventListener("click",()=>{try{currentLink=buildTelegramProxyLink({server:$("server").value,port:$("port").value,secret:$("secret").value});$("link").textContent=currentLink;$("output").classList.add("show");$("message").textContent="تم إنشاء الرابط محلياً. تأكد أن السيرفر يعمل وأن المنفذ مفتوح.";}catch(e){$("output").classList.remove("show");$("message").textContent=e.message;}});
 $("copy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(currentLink);$("message").textContent="تم نسخ الرابط.";}catch{$("message").textContent="تعذر النسخ التلقائي؛ اضغط مطولاً على الرابط لنسخه.";}});
-$("open").addEventListener("click",()=>{if(currentLink)location.href=currentLink;});
+$("open").addEventListener("click",()=>{if(currentLink)location.href=currentLink;});\n
+const adminToken=$("adminToken"), adminMessage=$("adminMessage"), proxyList=$("proxyList");
+adminToken.value=sessionStorage.getItem("laythProxyAdminToken")||"";
+function authHeaders(){const token=adminToken.value.trim();if(token)sessionStorage.setItem("laythProxyAdminToken",token);return {"Authorization":"Bearer "+token,"Content-Type":"application/json"};}
+async function api(path,options={}){const response=await fetch(path,{...options,headers:{...authHeaders(),...(options.headers||{})}});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||("HTTP "+response.status));return data;}
+function showProxyRows(items){proxyList.replaceChildren();if(!items.length){proxyList.textContent="لا توجد بروكسيات مسجّلة بعد.";return;}for(const item of items){const row=document.createElement("div");row.className="step";row.style.cssText="padding:13px;border:1px solid var(--line);border-radius:12px;display:block";const title=document.createElement("b");title.textContent=item.name+" — "+item.server+":"+item.port;const status=document.createElement("p");status.className="small";status.textContent="الحالة: "+item.status+" • آخر فحص: "+(item.last_check||"لم يُفحص");const actions=document.createElement("div");actions.className="actions";const check=document.createElement("button");check.className="btn btn-dark";check.textContent="فحص TCP";check.onclick=async()=>{try{const r=await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action:"check"})});adminMessage.textContent=r.status==="online"?"المنفذ يستجيب • "+r.latency_ms+" ms":"المنفذ لا يستجيب. هذا فحص TCP وليس اختبار MTProto كامل.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};const del=document.createElement("button");del.className="btn btn-dark";del.textContent="حذف";del.onclick=async()=>{if(!confirm("حذف سجل هذا البروكسي؟"))return;try{await api("/api/proxies/"+encodeURIComponent(item.id),{method:"DELETE"});await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};actions.append(check,del);row.append(title,status,actions);proxyList.append(row);}}
+async function refreshProxies(){try{adminMessage.textContent="جاري تحميل القائمة…";const data=await api("/api/proxies");showProxyRows(data.proxies||[]);adminMessage.textContent="تم تحديث القائمة.";}catch(e){adminMessage.textContent=e.message;}}
+$("loadProxies").addEventListener("click",refreshProxies);
+$("clearToken").addEventListener("click",()=>{sessionStorage.removeItem("laythProxyAdminToken");adminToken.value="";adminMessage.textContent="تم مسح مفتاح الإدارة من جلسة المتصفح.";});
+$("registerProxy").addEventListener("click",async()=>{try{const body={name:$("proxyName").value,server:$("proxyHost").value,port:$("proxyPort").value,secret:$("proxySecret").value};await api("/api/proxies",{method:"POST",body:JSON.stringify(body)});$("proxySecret").value="";adminMessage.textContent="تم حفظ سجل السيرفر. شغّل MTProxy عليه أولاً ثم افحص المنفذ.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}});
+
 </script></body></html>
