@@ -60,7 +60,8 @@ label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:1
   <button class="btn btn-primary wide" id="registerProxy" type="button">حفظ بيانات السيرفر</button>
   <div id="adminMessage" class="small" role="status" aria-live="polite" style="margin-top:12px"></div>
   <div id="proxyList" class="steps" style="margin-top:18px"></div>
-</section>\n<footer class="footer">© LAYTH AZIZ • Built for Telegram MTProto • No credentials are stored</footer>
+</section>
+<footer class="footer">© LAYTH AZIZ • Built for Telegram MTProto • No credentials are stored</footer>
 </main>
 <script type="module">
 import {buildTelegramProxyLink,generateSecret} from "./proxy.mjs";
@@ -69,7 +70,8 @@ $("generate").addEventListener("click",()=>{try{$("secret").value=generateSecret
 $("reveal").addEventListener("click",()=>{$("secret").type=$("secret").type==="password"?"text":"password";});
 $("create").addEventListener("click",()=>{try{currentLink=buildTelegramProxyLink({server:$("server").value,port:$("port").value,secret:$("secret").value});$("link").textContent=currentLink;$("output").classList.add("show");$("message").textContent="تم إنشاء الرابط محلياً. تأكد أن السيرفر يعمل وأن المنفذ مفتوح.";}catch(e){$("output").classList.remove("show");$("message").textContent=e.message;}});
 $("copy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(currentLink);$("message").textContent="تم نسخ الرابط.";}catch{$("message").textContent="تعذر النسخ التلقائي؛ اضغط مطولاً على الرابط لنسخه.";}});
-$("open").addEventListener("click",()=>{if(currentLink)location.href=currentLink;});\n
+$("open").addEventListener("click",()=>{if(currentLink)location.href=currentLink;});
+
 const adminToken=$("adminToken"), adminMessage=$("adminMessage"), proxyList=$("proxyList");
 adminToken.value=sessionStorage.getItem("laythProxyAdminToken")||"";
 function authHeaders(){const token=adminToken.value.trim();if(token)sessionStorage.setItem("laythProxyAdminToken",token);return {"Authorization":"Bearer "+token,"Content-Type":"application/json"};}
