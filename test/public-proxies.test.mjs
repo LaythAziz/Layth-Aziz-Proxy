@@ -142,7 +142,8 @@ test("API only includes proxies whose Telegram MTProto handshake succeeded", asy
   assert.match(api, /return checked\.filter\(Boolean\)/);
   assert.match(api, /tested_from: "Vercel server region"/);
   assert.match(api, /MTProto req_pq_multi\/resPQ/);
-  assert.match(api, /probeMtproto\(proxy\.server, proxy\.port, proxy\.secret/);\n  assert.match(api, /const \{ secret, \.\.\.publicProxy \} = proxy/);
+  assert.match(api, /probeMtproto\(proxy\.server, proxy\.port, proxy\.secret/);
+  assert.match(api, /const \{ secret, \.\.\.publicProxy \} = proxy/);
 });
 
 
