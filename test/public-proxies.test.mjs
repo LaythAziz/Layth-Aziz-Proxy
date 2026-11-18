@@ -138,7 +138,7 @@ test("public page removes old proxy entries when a fresh verification request fa
 test("API only includes proxies whose TCP connection probe succeeded", async () => {
   const { readFile } = await import("node:fs/promises");
   const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
-  assert.match(api, /if\(result\.online\) checked\[index\]/);
+  assert.match(api, /if \(result\.online\) checked\[index\]/);
   assert.match(api, /return checked\.filter\(Boolean\)/);
   assert.match(api, /tested_from: "Vercel server region"/);
 });
