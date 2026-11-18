@@ -65,3 +65,9 @@ test("site supports Arabic and English with a persistent language switch", async
   assert.match(html, /Explore proxies|Explore Telegram proxies/);
   assert.match(html, /aria-label="Language"/);
 });
+
+test("language switching does not install a mutation observer or access storage unsafely", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  assert.doesNotMatch(html, /new MutationObserver/);
+  assert.match(html, /function readLanguagePreference\(\)[\s\S]*?try\s*\{[\s\S]*?localStorage\.getItem\(LANGUAGE_KEY\)/);
+});
