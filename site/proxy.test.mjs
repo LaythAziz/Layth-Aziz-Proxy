@@ -24,5 +24,5 @@ import { readFile } from "node:fs/promises";
 
 test("control panel does not contain escaped newline text that breaks HTML or JavaScript", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
-  assert.doesNotMatch(html, /\\\\n/);
+  assert.doesNotMatch(html, /\\n/);
 });
