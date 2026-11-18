@@ -71,7 +71,7 @@ The production dashboard is intended to be deployed on Vercel. The repository in
 
 ## Vercel admin API (cloud provisioning and proxy management)
 
-The repository includes a Vercel-compatible API for an authenticated proxy registry. It can save records for servers you already control, encrypt their MTProto secrets at rest, run a TCP reachability check, and delete registry records. A TCP check is **not** a full MTProto handshake or proof that Telegram can use the proxy.
+The repository includes a Vercel-compatible API for an authenticated proxy registry. It can provision Hetzner servers, save records for externally managed servers, encrypt MTProto secrets at rest, recover Telegram links for the authenticated administrator, run TCP reachability checks for managed cloud servers, and start, stop, or delete provisioned servers. A TCP check is **not** a full MTProto handshake or proof that Telegram can use the proxy.
 
 ### Required Vercel environment variables
 
@@ -86,7 +86,7 @@ Run the SQL in `supabase/mtproxy_instances.sql` in a dedicated Supabase project,
 
 ### Cloud provisioning
 
-The dashboard can now request a real Hetzner Cloud server when `HETZNER_API_TOKEN` is configured. For each new proxy it generates a cryptographically random MTProto secret and an available high TCP port, asks Hetzner to create an Ubuntu server in the selected location, obtains the server's assigned public IPv4 address, and boots MTProxy through cloud-init + systemd (automatic restart enabled). The secret is encrypted in Supabase and returned to the admin once with the Telegram deep link.
+The dashboard can now request a real Hetzner Cloud server when `HETZNER_API_TOKEN` is configured. For each new proxy it generates a cryptographically random MTProto secret and an available high TCP port, asks Hetzner to create an Ubuntu server in the selected location, obtains the server's assigned public IPv4 address, and boots MTProxy through cloud-init + systemd (automatic restart enabled). The secret is encrypted in Supabase; the full Telegram link is returned only to the authenticated administrator during creation or an explicit reveal-link request.
 
 The API can start, stop, check TCP reachability, recover the Telegram link for an authorized admin, and delete a provisioned Hetzner server. Deleting a manually registered external server still deletes only its registry record.
 
