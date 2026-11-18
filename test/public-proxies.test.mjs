@@ -105,6 +105,7 @@ test("site automatically refreshes and keeps the last good proxy list after an u
   const { readFile } = await import("node:fs/promises");
   const html = await readFile(new URL("../site/index.html", import.meta.url), "utf8");
   assert.ok(html.includes("setInterval(()=>{if(!document.hidden)load({silent:true})},75000)"));
+  assert.ok(html.includes('document.addEventListener("visibilitychange",()=>{if(!document.hidden)load({silent:true})})'));
   assert.ok(html.includes("Refresh failed — showing the last successful list"));
   assert.ok(html.includes("if(proxies.length){"));
 });
