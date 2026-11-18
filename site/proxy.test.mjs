@@ -37,7 +37,7 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.doesNotMatch(html, /id="historyPanel"|تاريخ قياسات TCP|سجل الأداء|ملاحظة مهمة عن الـPing/);
   assert.match(html, /id="notificationToggle"/);
   assert.match(html, /id="qrDialog"/);
-  assert.match(html, /last_checked_at/);
+  assert.match(html, /\[t\("check"\),"check"\]/);
   assert.match(html, /LANGUAGE_KEY="lap_language_v1"/);
   assert.match(html, /Notification\.requestPermission/);
   assert.match(html, /QRCode|qrserver\.com/);
