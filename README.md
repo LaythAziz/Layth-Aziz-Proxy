@@ -71,3 +71,21 @@ After the first successful Pages deployment, the site URL is normally:
 `https://laythaziz.github.io/Layth-Aziz-Proxy/`
 
 If Pages is not enabled yet, open repository Settings → Pages and choose GitHub Actions as the build and deployment source.
+
+
+## Vercel admin API (registry and TCP checks)
+
+The repository includes a Vercel-compatible API for an authenticated proxy registry. It can save records for servers you already control, encrypt their MTProto secrets at rest, run a TCP reachability check, and delete registry records. A TCP check is **not** a full MTProto handshake or proof that Telegram can use the proxy.
+
+### Required Vercel environment variables
+
+- `ADMIN_API_TOKEN`: a long random admin token. Generate with `openssl rand -hex 32`.
+- `PROXY_SECRET_ENCRYPTION_KEY`: exactly 64 hexadecimal characters. Generate with `openssl rand -hex 32`.
+- `SUPABASE_URL`: your Supabase project URL.
+- `SUPABASE_SERVICE_ROLE_KEY`: Supabase service-role key. Server-side only; never prefix it with `NEXT_PUBLIC_`.
+
+Run the SQL in `supabase/mtproxy_instances.sql` in the Supabase SQL editor, then add all four values in Vercel → Project Settings → Environment Variables and redeploy. Do not commit real credentials.
+
+### Current boundary
+
+This API is a management foundation, not a cloud-server marketplace. It does not provision a VPS, start or stop a remote MTProxy process, or promise 24/7 uptime. Those actions require an actual infrastructure provider account/API and a running host with public TCP access. With no VPS/provider account configured, the app must show that provisioning is unavailable rather than fabricate an online proxy. Deleting a row removes only its registry record; it does not shut down a remote server.
