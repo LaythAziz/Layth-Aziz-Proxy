@@ -71,3 +71,22 @@ test("language switching does not install a mutation observer or access storage 
   assert.doesNotMatch(html, /new MutationObserver/);
   assert.match(html, /function readLanguagePreference\(\)[\s\S]*?try\s*\{[\s\S]*?localStorage\.getItem\(LANGUAGE_KEY\)/);
 });
+
+test("complete bilingual interface translates every visible section and dynamic state", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  for (const phrase of [
+    "الصورة الشخصية لليث عزيز", "آخر تحديث للقائمة", "على هذا الجهاز",
+    "شبكة البروكسيات العالمية", "المتاح حالياً فقط — الترتيب من الأقل زمناً إلى الأعلى",
+    "أقل من 100 ms", "أقل من 250 ms", "أقل من 500 ms",
+    "استجاب لفحص TCP", "زمن TCP من السيرفر", "مصدر عام",
+    "لا توجد مفضلات متاحة حالياً. العناصر المحفوظة تبقى على جهازك.",
+    "لا توجد نتائج ضمن الفلتر.", "لم نعثر على بروكسيات استجابت للفحص حالياً.",
+    "نجمع المصادر ونفحص المنافذ المتاحة…", "تعذر جلب القائمة",
+    "الإشعارات مفعّلة", "تعذر تفعيل الإشعارات",
+    "المرشح الأسرع حسب فحص الخادم", "لا توجد بروكسيات مستجيبة حالياً."
+  ]) assert.ok(html.includes(phrase), "missing Arabic source phrase: " + phrase);
+  assert.match(html, /function translateText\(/);
+  assert.match(html, /translateText\(trimmed\)/);
+  assert.match(html, /currentLanguage===\"en\"\?\"en-US\":\"ar-IQ\"/);
+  assert.match(html, /translations\[.*الصورة الشخصية لليث عزيز/);
+});
