@@ -3,6 +3,9 @@
   "framework": null,
   "outputDirectory": "site",
   "functions": {
+    "api/*.js": {
+      "maxDuration": 30
+    },
     "api/**/*.js": {
       "maxDuration": 30
     }
