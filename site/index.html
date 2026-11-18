@@ -13,36 +13,18 @@
 .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:start}.card{background:linear-gradient(145deg,#121e31,#0d1625);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 18px 55px #0003}.card h2{font-size:18px;margin:0 0 7px}.card>p{font-size:13px;color:var(--muted);line-height:1.8;margin:0 0 20px}
 label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:100%;background:#080f1c;border:1px solid #2b3d57;color:white;border-radius:11px;padding:14px;font:inherit;outline:none;direction:ltr;text-align:left}input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #57d9e81a}.fieldrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .secretrow{display:flex;gap:8px}.secretrow input{min-width:0}.btn{border:0;border-radius:11px;padding:13px 16px;font:inherit;font-weight:750;cursor:pointer;transition:.18s}.btn:active{transform:scale(.98)}.btn-primary{background:var(--cyan);color:#06202a}.btn-dark{background:#1b2a40;color:#e7f2ff;border:1px solid #344963}.btn:disabled{opacity:.45;cursor:not-allowed}.wide{width:100%;margin-top:16px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.note{border:1px solid #594d2d;background:#2b2518;color:#f1d69a;border-radius:12px;padding:13px;font-size:12px;line-height:1.8;margin-top:16px}.status{display:flex;align-items:center;gap:9px;font-size:13px;color:#f3ce83;margin:16px 0}.dot{width:8px;height:8px;border-radius:50%;background:#e7b85d;box-shadow:0 0 12px #e7b85d80}
+.cloud-panel{margin-bottom:18px}.secondary-tools{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}.secondary-tools summary,.legacy-tools summary{cursor:pointer;color:var(--cyan);font-weight:700;font-size:14px;padding:8px 0}.legacy-tools{margin-top:18px}.legacy-tools .grid{margin-top:14px}.note{border:1px solid #594d2d;background:#2b2518;color:#f1d69a;border-radius:12px;padding:13px;font-size:12px;line-height:1.8;margin-top:16px}.status{display:flex;align-items:center;gap:9px;font-size:13px;color:#f3ce83;margin:16px 0}.dot{width:8px;height:8px;border-radius:50%;background:#e7b85d;box-shadow:0 0 12px #e7b85d80}
 .steps{display:grid;gap:14px}.step{display:flex;gap:12px;align-items:flex-start}.num{flex:none;width:28px;height:28px;border-radius:9px;background:#18394a;color:var(--cyan);display:grid;place-items:center;font-weight:800;font-size:13px}.step b{font-size:13px}.step p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.7}
 .output{display:none;margin-top:16px;padding:14px;background:#081522;border:1px solid #24536a;border-radius:13px;overflow-wrap:anywhere;direction:ltr;text-align:left;font-size:12px;line-height:1.8}.output.show{display:block}.small{font-size:11px;color:var(--muted);line-height:1.8}.footer{margin-top:24px;text-align:center;color:#75869d;font-size:11px}
 @media(max-width:720px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.hero{padding-top:22px}.card{padding:18px}.fieldrow{grid-template-columns:1fr 1fr}}@media(max-width:390px){.fieldrow{grid-template-columns:1fr}.pill{white-space:normal;text-align:center}}
 </style>
 </head>
 <body><main class="wrap">
-<header class="top"><div class="brand"><div class="logo">LA</div><div><strong>LAYTH AZIZ PROXY</strong><small>MTProto Control Panel</small></div></div><div class="pill">لوحة الإعداد</div></header>
-<section class="hero"><div class="eyebrow">PRIVATE CONTROL • TELEGRAM MTPROTO</div><h1>جهّز رابط البروكسي<br>واربطه بتيليجرام.</h1><p>أدخل عنوان سيرفرك ومنفذه والسر، ثم أنشئ رابط اتصال مباشر يفتح تطبيق Telegram. بياناتك تبقى في متصفحك ولا تُرسل إلى هذا الموقع.</p></section>
-<div class="grid">
-<section class="card"><h2>إعداد اتصال البروكسي</h2><p>هذه اللوحة تنشئ رابط تيليجرام للإعدادات التي أدخلتها؛ لا تنشئ سيرفر MTProxy بحد ذاتها.</p>
-<label for="server">عنوان السيرفر (IP أو Domain)</label><input id="server" autocomplete="off" spellcheck="false" placeholder="مثال: 203.0.113.10">
-<div class="fieldrow"><div><label for="port">المنفذ TCP</label><input id="port" inputmode="numeric" value="443" placeholder="443"></div><div><label for="secret">Secret (32 خانة)</label><input id="secret" type="password" autocomplete="off" spellcheck="false" placeholder="32 hex characters"></div></div>
-<div class="actions"><button class="btn btn-dark" id="generate" type="button">توليد Secret آمن</button><button class="btn btn-dark" id="reveal" type="button">إظهار / إخفاء</button></div>
-<button class="btn btn-primary wide" id="create" type="button">إنشاء رابط Telegram</button>
-<div id="message" class="small" role="status" aria-live="polite" style="margin-top:12px"></div>
-<div id="output" class="output" dir="ltr"><div id="link"></div><div class="actions"><button class="btn btn-dark" id="copy" type="button">نسخ الرابط</button><button class="btn btn-primary" id="open" type="button">فتح Telegram</button></div></div>
-<div class="note">تنبيه أمني: لا تضع Secret في GitHub أو ترسله لأي شخص. إذا كان البروكسي عاماً، فكل من يمتلك الرابط يستطيع استخدامه.</div>
-</section>
-<aside class="card"><h2>حالة الخدمة</h2><div class="status"><span class="dot"></span><b>السيرفر غير مربوط بعد</b></div><p>المستودع يحتوي على ملفات بناء MTProxy، لكن لا يوجد حالياً عنوان سيرفر عام متصل حتى نعرضه كخدمة تعمل.</p><div class="steps">
-<div class="step"><span class="num">1</span><div><b>توفير سيرفر متصل</b><p>نحتاج Linux host دائم مع منفذ TCP عام مفتوح ووصول إلى Telegram.</p></div></div>
-<div class="step"><span class="num">2</span><div><b>تشغيل MTProxy</b><p>نستخدم ملفات Docker الموجودة في مستودع المشروع ونضبط Secret على السيرفر فقط.</p></div></div>
-<div class="step"><span class="num">3</span><div><b>إنشاء رابط Telegram</b><p>بعد التأكد من IP والمنفذ والسر، ننشئ الرابط ونختبر الاتصال فعلياً.</p></div></div></div>
-<hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
-
-<p class="small" style="margin-top:12px">GitHub Actions هنا للبناء والاختبار والنشر فقط، وليس لتشغيل بروكسي دائم على مدار الساعة.</p></aside>
-</div>
-<section class="card" style="margin-top:18px">
-  <h2>إنشاء وإدارة البروكسيات السحابية</h2>
-  <p>أنشئ سيرفراً عاماً حقيقياً تلقائياً. سيُخصّص له IP ومنفذ TCP وSecret مستقل، ثم يبدأ إعداد MTProxy عليه.</p>
+<header class="top"><div class="brand"><div class="logo">LA</div><div><strong>LAYTH AZIZ PROXY</strong><small>MTProto Control Panel</small></div></div><div class="pill">لوحة الإدارة</div></header>
+<section class="hero"><div class="eyebrow">LAYTH AZIZ • MTPROTO MANAGEMENT</div><h1>إدارة بروكسيات Telegram<br>من مكان واحد.</h1><p>أنشئ سيرفرات MTProto سحابية، تابع حالة الاتصال، وتحكّم بالتشغيل والحذف. إنشاء السيرفر يتطلب حساب استضافة ومفاتيح إعداد آمنة.</p></section>
+<section class="card cloud-panel">
+  <h2>إدارة البروكسيات السحابية</h2>
+  <p>أنشئ سيرفراً عاماً حقيقياً. يحصل كل بروكسي على IP من مزوّد الاستضافة ومنفذ TCP وSecret مستقلين.</p>
   <label for="cloudName">اسم البروكسي الجديد</label>
   <input id="cloudName" value="Layth Proxy" maxlength="60" />
   <label for="cloudLocation">موقع السيرفر</label>
@@ -56,13 +38,13 @@ label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:1
   </select>
   <button class="btn btn-primary wide" id="provisionProxy" type="button">توليد بروكسي وسيرفر حقيقي</button>
   <div id="provisionResult" class="output" dir="ltr"></div>
-  <div class="note">يتطلب هذا الزر ربط HETZNER_API_TOKEN في Vercel. إنشاء السيرفر قد يترتب عليه رسوم من المزوّد؛ راجع السعر قبل التفعيل. عنوان IP لا يظهر إلا بعد أن يرجعه المزوّد فعلياً.</div>
-  <label for="adminToken">مفتاح الإدارة (يبقى في جلسة المتصفح فقط)</label>
+  <div class="note">يتطلب إنشاء السيرفر ربط HETZNER_API_TOKEN. قد تُحتسب رسوم استضافة. لا يتم عرض IP إلا بعد تخصيصه فعلياً من المزوّد.</div>
+  <label for="adminToken">مفتاح دخول الإدارة</label>
   <input id="adminToken" type="password" autocomplete="off" placeholder="ADMIN_API_TOKEN" />
   <div class="actions"><button class="btn btn-dark" id="loadProxies" type="button">تحديث القائمة</button><button class="btn btn-dark" id="clearToken" type="button">مسح المفتاح</button></div>
   <div class="note" style="margin-top:14px">لربط الإدارة تحتاج إعداد Supabase ومفاتيح البيئة في Vercel. لا تضع أي مفتاح سري داخل ملفات GitHub.</div>
   <div style="height:1px;background:var(--line);margin:20px 0"></div>
-  <h2 style="font-size:15px">إضافة سيرفر موجود مسبقاً (اختياري)</h2>
+  <details class="secondary-tools"><summary>إضافة سيرفر خارجي موجود مسبقاً</summary>
   <div class="fieldrow">
     <div><label for="proxyName">اسم البروكسي</label><input id="proxyName" placeholder="My Telegram Proxy" /></div>
     <div><label for="proxyHost">IP أو Domain</label><input id="proxyHost" placeholder="203.0.113.10" /></div>
@@ -71,11 +53,30 @@ label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:1
     <div><label for="proxyPort">المنفذ</label><input id="proxyPort" value="443" inputmode="numeric" /></div>
     <div><label for="proxySecret">Secret</label><input id="proxySecret" type="password" placeholder="32 hex characters" /></div>
   </div>
-  <button class="btn btn-primary wide" id="registerProxy" type="button">حفظ بيانات السيرفر</button>
+  <button class="btn btn-primary wide" id="registerProxy" type="button">حفظ بيانات السيرفر</button></details>
   <div id="adminMessage" class="small" role="status" aria-live="polite" style="margin-top:12px"></div>
   <div id="proxyList" class="steps" style="margin-top:18px"></div>
 </section>
-<footer class="footer">© LAYTH AZIZ • Built for Telegram MTProto • No credentials are stored</footer>
+<details class="legacy-tools"><summary>أدوات إضافية: إنشاء رابط يدوي ومعلومات تشغيل</summary><div class="grid">
+<section class="card"><h2>إعداد اتصال البروكسي</h2><p>هذه اللوحة تنشئ رابط تيليجرام للإعدادات التي أدخلتها؛ لا تنشئ سيرفر MTProxy بحد ذاتها.</p>
+<label for="server">عنوان السيرفر (IP أو Domain)</label><input id="server" autocomplete="off" spellcheck="false" placeholder="مثال: 203.0.113.10">
+<div class="fieldrow"><div><label for="port">المنفذ TCP</label><input id="port" inputmode="numeric" value="443" placeholder="443"></div><div><label for="secret">Secret (32 خانة)</label><input id="secret" type="password" autocomplete="off" spellcheck="false" placeholder="32 hex characters"></div></div>
+<div class="actions"><button class="btn btn-dark" id="generate" type="button">توليد Secret آمن</button><button class="btn btn-dark" id="reveal" type="button">إظهار / إخفاء</button></div>
+<button class="btn btn-primary wide" id="create" type="button">إنشاء رابط Telegram</button>
+<div id="message" class="small" role="status" aria-live="polite" style="margin-top:12px"></div>
+<div id="output" class="output" dir="ltr"><div id="link"></div><div class="actions"><button class="btn btn-dark" id="copy" type="button">نسخ الرابط</button><button class="btn btn-primary" id="open" type="button">فتح Telegram</button></div></div>
+<div class="note">تنبيه أمني: رابط Telegram يحتوي على Secret الخاص بالبروكسي. لا تشاركه إلا مع من تريد السماح له باستخدامه.</div>
+</section>
+<aside class="card"><h2>كيف تعمل الخدمة؟</h2><p>هذه معلومات توضيحية وليست حالة اتصال مباشرة.</p><div class="steps">
+<div class="step"><span class="num">1</span><div><b>توفير سيرفر متصل</b><p>نحتاج Linux host دائم مع منفذ TCP عام مفتوح ووصول إلى Telegram.</p></div></div>
+<div class="step"><span class="num">2</span><div><b>تشغيل MTProxy</b><p>نستخدم ملفات Docker الموجودة في مستودع المشروع ونضبط Secret على السيرفر فقط.</p></div></div>
+<div class="step"><span class="num">3</span><div><b>إنشاء رابط Telegram</b><p>بعد التأكد من IP والمنفذ والسر، ننشئ الرابط ونختبر الاتصال فعلياً.</p></div></div></div>
+<hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+
+<p class="small" style="margin-top:12px">GitHub Actions هنا للبناء والاختبار والنشر فقط، وليس لتشغيل بروكسي دائم على مدار الساعة.</p></aside>
+</div></details>
+
+<footer class="footer">© LAYTH AZIZ • MTProto Control Panel • لا تشارك روابط البروكسي أو مفاتيح الإدارة</footer>
 </main>
 <script type="module">
 import {buildTelegramProxyLink,generateSecret} from "./proxy.mjs";
@@ -92,7 +93,8 @@ function authHeaders(){const token=adminToken.value.trim();if(token)sessionStora
 async function api(path,options={}){const response=await fetch(path,{...options,headers:{...authHeaders(),...(options.headers||{})}});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||("HTTP "+response.status));return data;}
 function showProxyRows(items){proxyList.replaceChildren();if(!items.length){proxyList.textContent="لا توجد بروكسيات مسجّلة بعد.";return;}for(const item of items){const row=document.createElement("div");row.className="step";row.style.cssText="padding:13px;border:1px solid var(--line);border-radius:12px;display:block";const title=document.createElement("b");title.textContent=item.name+" — "+item.server+":"+item.port;const status=document.createElement("p");status.className="small";status.textContent="الحالة: "+item.status+" • "+(item.provider_name==="hetzner"?"سيرفر سحابي • "+(item.provider_location||""):"سيرفر خارجي")+" • زمن الاستجابة: "+(item.latency_ms==null?"غير مقاس":item.latency_ms+" ms")+" • آخر فحص: "+(item.last_check||"لم يُفحص");const actions=document.createElement("div");actions.className="actions";
 if(item.provider_name==="hetzner"){const power=document.createElement("button");power.className="btn btn-dark";power.textContent=item.status==="stopped"?"تشغيل السيرفر":"إيقاف السيرفر";power.onclick=async()=>{try{const action=item.status==="stopped"?"start":"stop";await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action})});adminMessage.textContent=action==="stop"?"تم إرسال أمر إيقاف السيرفر.":"تم إرسال أمر تشغيل السيرفر؛ انتظر اكتمال الإقلاع.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};actions.append(power);}
-const check=document.createElement("button");check.className="btn btn-dark";check.textContent="فحص TCP";check.onclick=async()=>{try{const r=await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action:"check"})});adminMessage.textContent=r.status==="online"?"المنفذ يستجيب • "+r.latency_ms+" ms":"المنفذ لا يستجيب. هذا فحص TCP وليس اختبار MTProto كامل.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};const del=document.createElement("button");del.className="btn btn-dark";del.textContent="حذف السجل";del.onclick=async()=>{if(!confirm(item.provider_name==="hetzner"?"سيتم حذف السيرفر السحابي نهائياً وإيقاف البروكسي. هل تريد المتابعة؟":"حذف سجل هذا البروكسي؟"))return;try{await api("/api/proxies/"+encodeURIComponent(item.id),{method:"DELETE"});await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};actions.append(check,del);row.append(title,status,actions);proxyList.append(row);}}
+const reveal=document.createElement("button");reveal.className="btn btn-dark";reveal.textContent="عرض رابط Telegram";reveal.onclick=async()=>{try{const r=await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action:"reveal-link"})});const link=document.createElement("p");link.className="small";link.dir="ltr";link.textContent=r.telegram_link;const copy=document.createElement("button");copy.className="btn btn-dark";copy.textContent="نسخ الرابط";copy.onclick=async()=>{try{await navigator.clipboard.writeText(r.telegram_link);adminMessage.textContent="تم نسخ رابط Telegram.";}catch{adminMessage.textContent="تعذر النسخ التلقائي؛ انسخ الرابط يدوياً.";}};row.append(link,copy);}catch(e){adminMessage.textContent=e.message;}};actions.append(reveal);
+const check=document.createElement("button");check.className="btn btn-dark";check.textContent="فحص TCP";check.onclick=async()=>{try{const r=await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action:"check"})});adminMessage.textContent=r.status==="online"?"المنفذ يستجيب • "+r.latency_ms+" ms":"المنفذ لا يستجيب. هذا فحص TCP وليس اختبار MTProto كامل.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};const del=document.createElement("button");del.className="btn btn-dark";del.textContent=item.provider_name==="hetzner"?"حذف البروكسي والسيرفر":"حذف السجل";del.onclick=async()=>{if(!confirm(item.provider_name==="hetzner"?"سيتم حذف السيرفر السحابي نهائياً وإيقاف البروكسي. هل تريد المتابعة؟":"حذف سجل هذا البروكسي؟"))return;try{await api("/api/proxies/"+encodeURIComponent(item.id),{method:"DELETE"});await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};actions.append(check,del);row.append(title,status,actions);proxyList.append(row);}}
 async function refreshProxies(){try{adminMessage.textContent="جاري تحميل القائمة…";const data=await api("/api/proxies");showProxyRows(data.proxies||[]);adminMessage.textContent="تم تحديث القائمة.";}catch(e){adminMessage.textContent=e.message;}}
 $("loadProxies").addEventListener("click",refreshProxies);
 $("clearToken").addEventListener("click",()=>{sessionStorage.removeItem("laythProxyAdminToken");adminToken.value="";adminMessage.textContent="تم مسح مفتاح الإدارة من جلسة المتصفح.";});
