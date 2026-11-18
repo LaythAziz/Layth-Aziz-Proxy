@@ -117,7 +117,7 @@ test("admin dashboard is separate and calls authenticated proxy management APIs"
 test("public page initializes storage helpers before reading saved settings", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   const readDefinition = html.indexOf("const read=(k,d)=>");
-  const settingsRead = html.indexOf("const savedSettings=read(K.settings");
+  const settingsRead = html.indexOf("const rawSettings=read(K.settings");
   assert.ok(readDefinition >= 0 && settingsRead >= 0 && readDefinition < settingsRead,
     "storage helper must exist before saved settings are read");
 });
