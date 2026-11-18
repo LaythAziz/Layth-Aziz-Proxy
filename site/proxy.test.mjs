@@ -46,7 +46,7 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.match(html, /whip-pan/);
   assert.match(html, /slice/);
   assert.match(html, /zoom-through/);
-  assert.match(html, /LaythAziz\\/Profile-\\/main\\/assets\\/layth\\.jpg/);
+  assert.ok(html.includes("https://raw.githubusercontent.com/LaythAziz/Profile-/main/assets/layth.jpg"));
   assert.doesNotMatch(html, /GLOBAL NETWORK|GLOBAL TELEGRAM CONNECTIONS|hero-visual|globe-core/);
   assert.doesNotMatch(html, /إدارة البروكسيات السحابية|ADMIN_API_TOKEN|Hetzner|GitHub/);
 });
