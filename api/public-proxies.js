@@ -45,7 +45,7 @@ export default async function handler(req, res) {
   }
   res.setHeader("Cache-Control", "s-maxage=15, stale-while-revalidate=0");
   try {
-    const candidates = parsePublicProxyList(OWNER_PROXIES.join("\\n"), { limit: 4 });
+    const candidates = parsePublicProxyList(OWNER_PROXIES.join("\n"), { limit: 4 });
     const proxies = await probeCandidates(candidates);
     return res.status(200).json({
       proxies,
