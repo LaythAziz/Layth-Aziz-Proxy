@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<meta name="description" content="LAYTH AZIZ PROXY — لوحة إعداد وربط MTProto Proxy مع Telegram">
+<title>LAYTH AZIZ PROXY</title>
+<style>
+:root{color-scheme:dark;--bg:#080d18;--panel:#101a2b;--line:#22324a;--muted:#9aabc2;--text:#f4f7fb;--cyan:#57d9e8;--green:#56d6a0;--red:#ff9a9a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -15%,#173653 0,transparent 45%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+.wrap{width:min(960px,calc(100% - 32px));margin:auto;padding:28px 0 56px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border:1px solid #326077;border-radius:14px;display:grid;place-items:center;color:var(--cyan);font-weight:900;letter-spacing:-2px;background:#10283a}.brand strong{display:block;letter-spacing:1.2px}.brand small,.muted{color:var(--muted)}.pill{font-size:12px;border:1px solid #6b5930;color:#f4cd78;padding:7px 11px;border-radius:99px;white-space:nowrap}
+.hero{padding:34px 0 24px}.eyebrow{color:var(--cyan);font-size:12px;letter-spacing:2px;font-weight:800}.hero h1{font-size:clamp(30px,6vw,52px);line-height:1.12;margin:12px 0}.hero p{max-width:650px;color:var(--muted);line-height:1.9;margin:0}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:start}.card{background:linear-gradient(145deg,#121e31,#0d1625);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 18px 55px #0003}.card h2{font-size:18px;margin:0 0 7px}.card>p{font-size:13px;color:var(--muted);line-height:1.8;margin:0 0 20px}
+label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:100%;background:#080f1c;border:1px solid #2b3d57;color:white;border-radius:11px;padding:14px;font:inherit;outline:none;direction:ltr;text-align:left}input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #57d9e81a}.fieldrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.secretrow{display:flex;gap:8px}.secretrow input{min-width:0}.btn{border:0;border-radius:11px;padding:13px 16px;font:inherit;font-weight:750;cursor:pointer;transition:.18s}.btn:active{transform:scale(.98)}.btn-primary{background:var(--cyan);color:#06202a}.btn-dark{background:#1b2a40;color:#e7f2ff;border:1px solid #344963}.btn:disabled{opacity:.45;cursor:not-allowed}.wide{width:100%;margin-top:16px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.note{border:1px solid #594d2d;background:#2b2518;color:#f1d69a;border-radius:12px;padding:13px;font-size:12px;line-height:1.8;margin-top:16px}.status{display:flex;align-items:center;gap:9px;font-size:13px;color:#f3ce83;margin:16px 0}.dot{width:8px;height:8px;border-radius:50%;background:#e7b85d;box-shadow:0 0 12px #e7b85d80}
+.steps{display:grid;gap:14px}.step{display:flex;gap:12px;align-items:flex-start}.num{flex:none;width:28px;height:28px;border-radius:9px;background:#18394a;color:var(--cyan);display:grid;place-items:center;font-weight:800;font-size:13px}.step b{font-size:13px}.step p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.7}
+.output{display:none;margin-top:16px;padding:14px;background:#081522;border:1px solid #24536a;border-radius:13px;overflow-wrap:anywhere;direction:ltr;text-align:left;font-size:12px;line-height:1.8}.output.show{display:block}.small{font-size:11px;color:var(--muted);line-height:1.8}.footer{margin-top:24px;text-align:center;color:#75869d;font-size:11px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.hero{padding-top:22px}.card{padding:18px}.fieldrow{grid-template-columns:1fr 1fr}}@media(max-width:390px){.fieldrow{grid-template-columns:1fr}.pill{white-space:normal;text-align:center}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div class="brand"><div class="logo">LA</div><div><strong>LAYTH AZIZ PROXY</strong><small>MTProto Control Panel</small></div></div><div class="pill">لوحة الإعداد</div></header>
+<section class="hero"><div class="eyebrow">PRIVATE CONTROL • TELEGRAM MTPROTO</div><h1>جهّز رابط البروكسي<br>واربطه بتيليجرام.</h1><p>أدخل عنوان سيرفرك ومنفذه والسر، ثم أنشئ رابط اتصال مباشر يفتح تطبيق Telegram. بياناتك تبقى في متصفحك ولا تُرسل إلى هذا الموقع.</p></section>
+<div class="grid">
+<section class="card"><h2>إعداد اتصال البروكسي</h2><p>هذه اللوحة تنشئ رابط تيليجرام للإعدادات التي أدخلتها؛ لا تنشئ سيرفر MTProxy بحد ذاتها.</p>
+<label for="server">عنوان السيرفر (IP أو Domain)</label><input id="server" autocomplete="off" spellcheck="false" placeholder="مثال: 203.0.113.10">
+<div class="fieldrow"><div><label for="port">المنفذ TCP</label><input id="port" inputmode="numeric" value="443" placeholder="443"></div><div><label for="secret">Secret (32 خانة)</label><input id="secret" type="password" autocomplete="off" spellcheck="false" placeholder="32 hex characters"></div></div>
+<div class="actions"><button class="btn btn-dark" id="generate" type="button">توليد Secret آمن</button><button class="btn btn-dark" id="reveal" type="button">إظهار / إخفاء</button></div>
+<button class="btn btn-primary wide" id="create" type="button">إنشاء رابط Telegram</button>
+<div id="message" class="small" role="status" aria-live="polite" style="margin-top:12px"></div>
+<div id="output" class="output" dir="ltr"><div id="link"></div><div class="actions"><button class="btn btn-dark" id="copy" type="button">نسخ الرابط</button><button class="btn btn-primary" id="open" type="button">فتح Telegram</button></div></div>
+<div class="note">تنبيه أمني: لا تضع Secret في GitHub أو ترسله لأي شخص. إذا كان البروكسي عاماً، فكل من يمتلك الرابط يستطيع استخدامه.</div>
+</section>
+<aside class="card"><h2>حالة الخدمة</h2><div class="status"><span class="dot"></span><b>السيرفر غير مربوط بعد</b></div><p>المستودع يحتوي على ملفات بناء MTProxy، لكن لا يوجد حالياً عنوان سيرفر عام متصل حتى نعرضه كخدمة تعمل.</p><div class="steps">
+<div class="step"><span class="num">1</span><div><b>توفير سيرفر متصل</b><p>نحتاج Linux host دائم مع منفذ TCP عام مفتوح ووصول إلى Telegram.</p></div></div>
+<div class="step"><span class="num">2</span><div><b>تشغيل MTProxy</b><p>نستخدم ملفات Docker الموجودة في مستودع المشروع ونضبط Secret على السيرفر فقط.</p></div></div>
+<div class="step"><span class="num">3</span><div><b>إنشاء رابط Telegram</b><p>بعد التأكد من IP والمنفذ والسر، ننشئ الرابط ونختبر الاتصال فعلياً.</p></div></div></div>
+<hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+<a href="https://github.com/LaythAziz/Layth-Aziz-Proxy" target="_blank" rel="noreferrer" style="color:var(--cyan);text-decoration:none;font-size:13px">فتح مستودع GitHub ↗</a>
+<p class="small" style="margin-top:12px">GitHub Actions هنا للبناء والاختبار والنشر فقط، وليس لتشغيل بروكسي دائم على مدار الساعة.</p></aside>
+</div><footer class="footer">© LAYTH AZIZ • Built for Telegram MTProto • No credentials are stored</footer>
+</main>
+<script type="module">
+import {buildTelegramProxyLink,generateSecret} from "./proxy.mjs";
+const $=id=>document.getElementById(id);let currentLink="";
+$("generate").addEventListener("click",()=>{try{$("secret").value=generateSecret();$("message").textContent="تم توليد Secret عشوائي آمن داخل جهازك.";}catch(e){$("message").textContent=e.message;}});
+$("reveal").addEventListener("click",()=>{$("secret").type=$("secret").type==="password"?"text":"password";});
+$("create").addEventListener("click",()=>{try{currentLink=buildTelegramProxyLink({server:$("server").value,port:$("port").value,secret:$("secret").value});$("link").textContent=currentLink;$("output").classList.add("show");$("message").textContent="تم إنشاء الرابط محلياً. تأكد أن السيرفر يعمل وأن المنفذ مفتوح.";}catch(e){$("output").classList.remove("show");$("message").textContent=e.message;}});
+$("copy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(currentLink);$("message").textContent="تم نسخ الرابط.";}catch{$("message").textContent="تعذر النسخ التلقائي؛ اضغط مطولاً على الرابط لنسخه.";}});
+$("open").addEventListener("click",()=>{if(currentLink)location.href=currentLink;});
+</script></body></html>
