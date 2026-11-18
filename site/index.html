@@ -15,13 +15,21 @@ label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:1
 .secretrow{display:flex;gap:8px}.secretrow input{min-width:0}.btn{border:0;border-radius:11px;padding:13px 16px;font:inherit;font-weight:750;cursor:pointer;transition:.18s}.btn:active{transform:scale(.98)}.btn-primary{background:var(--cyan);color:#06202a}.btn-dark{background:#1b2a40;color:#e7f2ff;border:1px solid #344963}.btn:disabled{opacity:.45;cursor:not-allowed}.wide{width:100%;margin-top:16px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .cloud-panel{margin-bottom:18px}.secondary-tools{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}.secondary-tools summary,.legacy-tools summary{cursor:pointer;color:var(--cyan);font-weight:700;font-size:14px;padding:8px 0}.legacy-tools{margin-top:18px}.legacy-tools .grid{margin-top:14px}.note{border:1px solid #594d2d;background:#2b2518;color:#f1d69a;border-radius:12px;padding:13px;font-size:12px;line-height:1.8;margin-top:16px}.status{display:flex;align-items:center;gap:9px;font-size:13px;color:#f3ce83;margin:16px 0}.dot{width:8px;height:8px;border-radius:50%;background:#e7b85d;box-shadow:0 0 12px #e7b85d80}
 .steps{display:grid;gap:14px}.step{display:flex;gap:12px;align-items:flex-start}.num{flex:none;width:28px;height:28px;border-radius:9px;background:#18394a;color:var(--cyan);display:grid;place-items:center;font-weight:800;font-size:13px}.step b{font-size:13px}.step p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.7}
-.output{display:none;margin-top:16px;padding:14px;background:#081522;border:1px solid #24536a;border-radius:13px;overflow-wrap:anywhere;direction:ltr;text-align:left;font-size:12px;line-height:1.8}.output.show{display:block}.small{font-size:11px;color:var(--muted);line-height:1.8}.footer{margin-top:24px;text-align:center;color:#75869d;font-size:11px}
+.output{display:none;margin-top:16px;padding:14px;background:#081522;border:1px solid #24536a;border-radius:13px;overflow-wrap:anywhere;direction:ltr;text-align:left;font-size:12px;line-height:1.8}.output.show{display:block}.small{font-size:11px;color:var(--muted);line-height:1.8}.public-proxy{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;margin-top:9px}.public-proxy .endpoint{direction:ltr;text-align:left;overflow-wrap:anywhere;font-size:12px}.public-proxy .btn{white-space:nowrap}.footer{margin-top:24px;text-align:center;color:#75869d;font-size:11px}
 @media(max-width:720px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.hero{padding-top:22px}.card{padding:18px}.fieldrow{grid-template-columns:1fr 1fr}}@media(max-width:390px){.fieldrow{grid-template-columns:1fr}.pill{white-space:normal;text-align:center}}
 </style>
 </head>
 <body><main class="wrap">
 <header class="top"><div class="brand"><div class="logo">LA</div><div><strong>LAYTH AZIZ PROXY</strong><small>MTProto Control Panel</small></div></div><div class="pill">لوحة الإدارة</div></header>
 <section class="hero"><div class="eyebrow">LAYTH AZIZ • MTPROTO MANAGEMENT</div><h1>إدارة بروكسيات Telegram<br>من مكان واحد.</h1><p>أنشئ سيرفرات MTProto سحابية، تابع حالة الاتصال، وتحكّم بالتشغيل والحذف. إنشاء السيرفر يتطلب حساب استضافة ومفاتيح إعداد آمنة.</p></section>
+<section class="card" style="margin-bottom:18px">
+  <h2>بروكسيات عالمية جاهزة</h2>
+  <p>اجلب روابط MTProto عامة من قوائم مجتمعية تتحدث باستمرار، وافتحها مباشرة في Telegram. لا تحتاج إلى حساب VPS أو مفاتيح استضافة لاستخدام هذه القائمة.</p>
+  <button class="btn btn-primary wide" id="loadPublicProxies" type="button" style="margin-top:0">جلب بروكسيات عالمية الآن</button>
+  <div id="publicProxyStatus" class="small" role="status" aria-live="polite" style="margin-top:12px">اضغط لجلب البروكسيات المتاحة حالياً…</div>
+  <div id="publicProxyList" style="margin-top:12px"></div>
+  <div class="note">هذه بروكسيات عامة يديرها أشخاص آخرون وليست مملوكة لك. قد تتوقف أو تكون بطيئة، ومشغّل البروكسي قد يرى عنوان IP وبيانات الاتصال الوصفية؛ لا تستخدم بروكسي مجهولاً للأنشطة الحساسة.</div>
+</section>
 <section class="card cloud-panel">
   <h2>إدارة البروكسيات السحابية</h2>
   <p>أنشئ سيرفراً عاماً حقيقياً. يحصل كل بروكسي على IP من مزوّد الاستضافة ومنفذ TCP وSecret مستقلين.</p>
@@ -87,6 +95,28 @@ $("reveal").addEventListener("click",()=>{$("secret").type=$("secret").type==="p
 $("create").addEventListener("click",()=>{try{currentLink=buildTelegramProxyLink({server:$("server").value,port:$("port").value,secret:$("secret").value});$("link").textContent=currentLink;$("output").classList.add("show");$("message").textContent="تم إنشاء الرابط محلياً. تأكد أن السيرفر يعمل وأن المنفذ مفتوح.";}catch(e){$("output").classList.remove("show");$("message").textContent=e.message;}});
 $("copy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(currentLink);$("message").textContent="تم نسخ الرابط.";}catch{$("message").textContent="تعذر النسخ التلقائي؛ اضغط مطولاً على الرابط لنسخه.";}});
 $("open").addEventListener("click",()=>{if(currentLink)location.href=currentLink;});
+
+const publicProxyList=$("publicProxyList"), publicProxyStatus=$("publicProxyStatus");
+async function loadPublicProxies(){
+  const button=$("loadPublicProxies");button.disabled=true;button.textContent="جاري جلب القائمة…";publicProxyStatus.textContent="نتصل بمصادر البروكسيات العامة…";publicProxyList.replaceChildren();
+  try{
+    const response=await fetch("/api/public-proxies",{headers:{"Accept":"application/json"}});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.error||"تعذر جلب القائمة");
+    for(const proxy of data.proxies||[]){
+      const row=document.createElement("div");row.className="public-proxy";
+      const endpoint=document.createElement("div");endpoint.className="endpoint";endpoint.textContent=proxy.server+":"+proxy.port;
+      const actions=document.createElement("div");actions.style.cssText="display:flex;gap:7px;flex-wrap:wrap";
+      const connect=document.createElement("button");connect.className="btn btn-primary";connect.textContent="اتصال";connect.onclick=()=>{location.href=proxy.telegram_link;};
+      const copy=document.createElement("button");copy.className="btn btn-dark";copy.textContent="نسخ";copy.onclick=async()=>{try{await navigator.clipboard.writeText(proxy.telegram_link);publicProxyStatus.textContent="تم نسخ رابط البروكسي.";}catch{publicProxyStatus.textContent="تعذر النسخ التلقائي؛ افتح زر الاتصال بدلاً منه.";}};
+      actions.append(connect,copy);row.append(endpoint,actions);publicProxyList.append(row);
+    }
+    publicProxyStatus.textContent="تم جلب "+(data.proxies||[]).length+" بروكسي عام. آخر تحديث: "+new Date(data.checked_at).toLocaleString("ar-IQ")+" • المصدر: "+new URL(data.source).hostname;
+  }catch(error){publicProxyStatus.textContent=error.message;}
+  finally{button.disabled=false;button.textContent="تحديث البروكسيات العالمية";}
+}
+$("loadPublicProxies").addEventListener("click",loadPublicProxies);
+loadPublicProxies();
 
 const adminToken=$("adminToken"), adminMessage=$("adminMessage"), proxyList=$("proxyList");
 adminToken.value=sessionStorage.getItem("laythProxyAdminToken")||"";
