@@ -7,3 +7,6 @@ id_rsa
 id_ed25519
 proxy-secret
 proxy-multi.conf
+
+.vercel
+node_modules
