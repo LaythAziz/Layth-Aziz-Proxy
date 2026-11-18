@@ -69,6 +69,12 @@ The dashboard includes a manual link helper that creates a Telegram `tg://proxy`
 The production dashboard is intended to be deployed on Vercel. The repository includes `vercel.json` with `site/` as the static output directory and root-level `api/` serverless functions.
 
 
+## Public proxy directory verification
+
+The public directory collects Telegram MTProxy links from several public feeds and verifies each candidate with a real Telegram `req_pq_multi` request. A candidate is listed only when the server returns a valid `resPQ` response containing the same random nonce. The verifier supports standard 16-byte secrets (abridged transport), `dd` padded-intermediate secrets, and `ee` Fake-TLS secrets with a verified Fake-TLS server digest. TCP reachability or a low ping alone is never enough for inclusion.
+
+Verification runs from the Vercel function's network region, not from the visitor's phone or Iraqi ISP. A successful MTProto handshake proves that the tested endpoint and secret completed the Telegram protocol handshake from that server location; it does not guarantee that Earthlink, Supercell, Al-Jazeera, Hala Sat, Al-Sabah, National Fiber, tower networks, or every other Iraqi provider can reach it. ISP-specific claims require real tests from devices connected to each provider.
+
 ## Vercel admin API (cloud provisioning and proxy management)
 
 The repository includes a Vercel-compatible API for an authenticated proxy registry. It can provision Hetzner servers, save records for externally managed servers, encrypt MTProto secrets at rest, recover Telegram links for the authenticated administrator, run TCP reachability checks for managed cloud servers, and start, stop, or delete provisioned servers. A TCP check is **not** a full MTProto handshake or proof that Telegram can use the proxy.
