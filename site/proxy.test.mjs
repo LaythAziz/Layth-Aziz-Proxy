@@ -83,7 +83,7 @@ test("complete bilingual interface translates every visible section and dynamic 
     "لا توجد نتائج ضمن الفلتر.", "لم نعثر على بروكسيات استجابت للفحص حالياً.",
     "نجمع المصادر ونفحص المنافذ المتاحة…", "تعذر جلب القائمة",
     "الإشعارات مفعّلة", "تعذر تفعيل الإشعارات",
-    "المرشح الأسرع حسب فحص الخادم", "لا توجد بروكسيات مستجيبة حالياً."
+    "المرشح الأسرع بعد التحقق من MTProto", "لا توجد بروكسيات مستجيبة حالياً."
   ]) assert.ok(html.includes(phrase), "missing Arabic source phrase: " + phrase);
   assert.match(html, /function translateText\(/);
   assert.match(html, /translateText\(trimmed\)/);
@@ -156,18 +156,17 @@ test("routine refresh and card rendering do not rescan the entire document for t
 test("every static Arabic interface label has an English translation", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   const dictionary = html.slice(html.indexOf("const translations="), html.indexOf("const reverseTranslations="));
-  const keys = new Set([...dictionary.matchAll(/"([^"]*[\\u0600-\\u06FF][^"]*)"\\s*:/g)].map(match => match[1]));
   const markup = html.slice(html.indexOf("<body>"), html.indexOf('<script type="module">'));
   const textNodes = [...markup.matchAll(/>([^<>]+)</g)].map(match => match[1].trim()).filter(value => /[\\u0600-\\u06FF]/.test(value));
   const attributes = [...markup.matchAll(/(?:aria-label|placeholder|alt)="([^"]*[\\u0600-\\u06FF][^"]*)"/g)].map(match => match[1]);
-  const missing = [...new Set([...textNodes, ...attributes].filter(value => !keys.has(value)))];
+  const missing = [...new Set([...textNodes, ...attributes].filter(value => !dictionary.includes('"'+value+'"')))];
   assert.deepEqual(missing, []);
 });
 
 test("English mode does not replace untranslated content with a generic error", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   assert.doesNotMatch(html, /return "Please try again\\."/);
-  assert.match(html, /document\\.documentElement\\.lang=toEnglish\\?"en":"ar"/);
-  assert.match(html, /document\\.documentElement\\.dir=toEnglish\\?"ltr":"rtl"/);
-  assert.match(html, /const reverseTranslations=\\{\\};for\\(const \\[ar,en\\] of Object\\.entries\\(translations\\)\\)/);
+  assert.ok(html.includes('document.documentElement.lang=toEnglish?"en":"ar"'));
+  assert.ok(html.includes('document.documentElement.dir=toEnglish?"ltr":"rtl"'));
+  assert.ok(html.includes("const reverseTranslations={};for(const [ar,en] of Object.entries(translations))"));
 });
