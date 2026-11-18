@@ -108,7 +108,7 @@ test("admin dashboard is separate and calls authenticated proxy management APIs"
   const html = await readFile(new URL("./admin.html", import.meta.url), "utf8");
   assert.match(html, /Authorization.*Bearer/);
   assert.match(html, /\/api\/proxies/);
-  assert.match(html, /action.*check/);
+  assert.match(html, /\\[t\\("check"\\),"check"\\]/);
   assert.match(html, /sessionStorage/);
   assert.doesNotMatch(html, /HETZNER_API_TOKEN|PROXY_SECRET_ENCRYPTION_KEY/);
 });
