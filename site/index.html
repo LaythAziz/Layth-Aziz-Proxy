@@ -113,54 +113,27 @@ select{background:#101b2c;color:#eaf3ff;border:1px solid #2b405e;border-radius:1
 <footer class="footer"><span>© 2026 LAYTH AZIZ PROXY</span><span>خدمة مستقلة لا تدير أو تملك البروكسيات العامة المدرجة</span></footer>
 </main>
 <script type="module">
-const $=id=>document.getElementById(id);
-const grid=$("proxyGrid"),status=$("status"),refresh=$("refresh");
-let proxies=[];
-function statusText(message){status.replaceChildren();const dot=document.createElement("span");dot.className="status-indicator";const label=document.createElement("span");label.textContent=message;status.append(dot,label);}
-function render(){
-  const max=$("filter").value,sort=$("sort").value;
-  let rows=proxies.filter(p=>max==="all"||p.latency_ms<Number(max));
-  rows.sort((a,b)=>sort==="fast"?a.latency_ms-b.latency_ms:b.latency_ms-a.latency_ms);
-  grid.replaceChildren();grid.classList.add("stagger");
-  if(!rows.length){const empty=document.createElement("div");empty.className="empty";empty.textContent=proxies.length?"لا توجد بروكسيات ضمن الفلتر المحدد. غيّر الفلتر لعرض نتائج أخرى.":"لم نعثر على بروكسيات استجابت للفحص الآن. حاول التحديث بعد قليل.";grid.append(empty);return;}
-  for(const proxy of rows){
-    const card=document.createElement("article");card.className="proxy-card slice";
-    const top=document.createElement("div");top.className="card-top";
-    const country=document.createElement("div");country.className="country";
-    const flag=document.createElement("span");flag.className="flag";flag.textContent="◎";
-    const region=document.createElement("span");region.textContent=proxy.region||"موقع غير محدد";
-    country.append(flag,region);
-    const badge=document.createElement("span");badge.className="online";badge.textContent="متصل بالفحص";
-    top.append(country,badge);
-    const endpoint=document.createElement("div");endpoint.className="endpoint";endpoint.textContent=proxy.server+":"+proxy.port;
-    const metrics=document.createElement("div");metrics.className="metrics";
-    const metric=(label,value,extra="")=>{const box=document.createElement("div");box.className="metric";const small=document.createElement("small");small.textContent=label;const strong=document.createElement("b");strong.className=extra;strong.textContent=value;box.append(small,strong);return box;};
-    metrics.append(metric("زمن TCP","~"+proxy.latency_ms+" ms","ping"),metric("الحالة","Online"),metric("المنفذ",String(proxy.port)));
-    const bottom=document.createElement("div");bottom.className="card-bottom";
-    const source=document.createElement("span");source.className="source";source.textContent=proxy.source||"Public feed";
-    const connect=document.createElement("button");connect.className="btn primary";connect.textContent="ربط Telegram";connect.addEventListener("click",()=>{location.href=proxy.telegram_link;});
-    bottom.append(source,connect);card.append(top,endpoint,metrics,bottom);grid.append(card);
-  }
-}
-async function load(){
-  refresh.disabled=true;refresh.textContent="جاري الفحص…";statusText("نجمع المصادر ونفحص المنافذ المتاحة…");
-  grid.replaceChildren();grid.classList.remove("stagger");
-  for(let i=0;i<4;i++){const sk=document.createElement("div");sk.className="skeleton";grid.append(sk);}
-  try{
-    const response=await fetch("/api/public-proxies",{headers:{Accept:"application/json"},cache:"no-store"});
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok)throw new Error(data.error||"تعذر جلب القائمة");
-    proxies=Array.isArray(data.proxies)?data.proxies:[];
-    const checked=new Date(data.checked_at).toLocaleString("ar-IQ");
-    statusText("تم فحص "+proxies.length+" بروكسي مستجيب • "+checked+" • الفحص من خادم الموقع");
-    render();
-  }catch(error){proxies=[];statusText(error.message);render();}
-  finally{refresh.disabled=false;refresh.textContent="إعادة فحص البروكسيات ↗";}
-}
-$("refresh").addEventListener("click",load);
-$("sort").addEventListener("change",render);$("filter").addEventListener("change",render);
-if("IntersectionObserver"in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("visible");observer.unobserve(entry.target);}}),{threshold:.12});document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));}else document.querySelectorAll(".reveal").forEach(el=>el.classList.add("visible"));
-load();
+const $=id=>document.getElementById(id),grid=$("proxyGrid"),status=$("status"),refresh=$("refresh");
+const K={fav:"lap_favorites_v1",hist:"lap_history_v1",avail:"lap_availability_v1"};
+const read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+let proxies=[],favorites=new Set(read(K.fav,[])),history=read(K.hist,[]),showFavorites=false;
+function statusText(s){status.replaceChildren();const dot=document.createElement("span");dot.className="status-indicator";const t=document.createElement("span");t.textContent=s;status.append(dot,t)}
+function timeLabel(v){if(!v)return"غير معروف";const d=new Date(v);return Number.isNaN(d.getTime())?"غير معروف":d.toLocaleString("ar-IQ",{dateStyle:"short",timeStyle:"short"})}
+function updateCounts(){$("onlineCount").textContent=String(proxies.length);$("favoriteCount").textContent=String(favorites.size)}
+function saveHistory(rows){const now=new Date().toISOString();for(const p of rows){history.push({id:p.id,server:p.server,port:p.port,latency_ms:p.latency_ms,at:now})}history=history.slice(-400);write(K.hist,history)}
+function renderHistory(){const host=$("historyList");host.replaceChildren();const groups=new Map();history.forEach(x=>{if(!groups.has(x.id))groups.set(x.id,[]);groups.get(x.id).push(x)});const rows=[...groups.values()].sort((a,b)=>new Date(b[b.length-1].at)-new Date(a[a.length-1].at)).slice(0,8);if(!rows.length){const e=document.createElement("div");e.className="micro";e.textContent="سيظهر سجل القياسات بعد أول فحص.";host.append(e);return}rows.forEach(list=>{const p=list[list.length-1],row=document.createElement("div");row.className="history-row";const n=document.createElement("span"),v=document.createElement("strong"),t=document.createElement("span");t.className="history-state";n.textContent=p.server+":"+p.port;v.textContent=p.latency_ms+" ms";t.textContent=timeLabel(p.at);row.append(n,v,t);host.append(row)})}
+function checkDrops(rows){const now=new Set(rows.map(x=>x.id)),old=read(K.avail,{}),dropped=[...favorites].filter(id=>old[id]===true&&!now.has(id));write(K.avail,Object.fromEntries([...favorites].map(id=>[id,now.has(id)])));if(dropped.length&&"Notification"in window&&Notification.permission==="granted")new Notification("توقف بروكسي مفضل",{body:"أحد البروكسيات المفضلة لم يظهر في آخر فحص."})}
+function render(){const max=$("filter").value,sort=$("sort").value;let rows=proxies.filter(p=>(max==="all"||p.latency_ms<Number(max))&&(!showFavorites||favorites.has(p.id)));rows.sort((a,b)=>sort==="fast"?a.latency_ms-b.latency_ms:b.latency_ms-a.latency_ms);grid.replaceChildren();grid.classList.add("stagger");if(!rows.length){const e=document.createElement("div");e.className="empty";e.textContent=showFavorites?"لا توجد مفضلات متاحة حالياً. العناصر المحفوظة تبقى على جهازك.":proxies.length?"لا توجد نتائج ضمن الفلتر.":"لم نعثر على بروكسيات استجابت للفحص حالياً.";grid.append(e);return}
+rows.forEach(p=>{const card=document.createElement("article");card.className="proxy-card slice"+(favorites.has(p.id)?" favorite":"");const top=document.createElement("div");top.className="card-top";const country=document.createElement("div");country.className="country";const flag=document.createElement("span");flag.className="flag";flag.textContent="◎";const region=document.createElement("span");region.textContent=p.region||"موقع غير محدد";country.append(flag,region);const badge=document.createElement("span");badge.className="online";badge.textContent="استجاب لفحص TCP";top.append(country,badge);const endpoint=document.createElement("div");endpoint.className="endpoint";endpoint.textContent=p.server+":"+p.port;const metrics=document.createElement("div");metrics.className="metrics";const metric=(label,value,extra)=>{const box=document.createElement("div"),small=document.createElement("small"),strong=document.createElement("b");box.className="metric";small.textContent=label;strong.textContent=value;if(extra)strong.className=extra;box.append(small,strong);return box};metrics.append(metric("زمن TCP من السيرفر","~"+p.latency_ms+" ms","ping"),metric("الحالة","Online",""),metric("المنفذ",String(p.port),""));const checked=document.createElement("div");checked.className="last-checked";checked.textContent="آخر فحص: "+timeLabel(p.checked_at||p.last_checked_at);const bottom=document.createElement("div");bottom.className="card-bottom";const source=document.createElement("span");source.className="source";source.textContent="مصدر عام";const actions=document.createElement("div");actions.className="card-actions";const fav=document.createElement("button");fav.className="icon-btn"+(favorites.has(p.id)?" is-fav":"");fav.textContent=favorites.has(p.id)?"★":"☆";fav.title="إضافة أو إزالة من المفضلة";fav.addEventListener("click",()=>{favorites.has(p.id)?favorites.delete(p.id):favorites.add(p.id);write(K.fav,[...favorites]);updateCounts();render()});const qr=document.createElement("button");qr.className="icon-btn";qr.textContent="QR";qr.addEventListener("click",()=>openQr(p.telegram_link));const connect=document.createElement("button");connect.className="btn primary";connect.textContent="ربط Telegram";connect.addEventListener("click",()=>location.href=p.telegram_link);actions.append(fav,qr,connect);bottom.append(source,actions);card.append(top,endpoint,metrics,checked,bottom);grid.append(card)})}
+function openQr(link){$("qrImage").src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=12&data="+encodeURIComponent(link);$("qrDialog").classList.add("open")}
+async function load(){refresh.disabled=true;refresh.textContent="جاري الفحص…";statusText("نجمع المصادر ونفحص المنافذ المتاحة…");grid.replaceChildren();grid.classList.remove("stagger");for(let i=0;i<4;i++){const s=document.createElement("div");s.className="skeleton";grid.append(s)}try{const r=await fetch("/api/public-proxies",{headers:{Accept:"application/json"},cache:"no-store"}),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"تعذر جلب القائمة");proxies=Array.isArray(d.proxies)?d.proxies:[];saveHistory(proxies);checkDrops(proxies);statusText("تم فحص "+proxies.length+" بروكسي مستجيب • "+timeLabel(d.checked_at)+" • القياس من خادم الموقع");render();renderHistory();updateCounts()}catch(e){proxies=[];statusText(e.message);render();updateCounts()}finally{refresh.disabled=false;refresh.textContent="إعادة فحص البروكسيات ↗"}}
+$("refresh").addEventListener("click",load);$("sort").addEventListener("change",render);$("filter").addEventListener("change",render);
+$("allToggle").addEventListener("click",()=>{showFavorites=false;$("allToggle").classList.add("active");$("favoritesToggle").classList.remove("active");render()});
+$("favoritesToggle").addEventListener("click",()=>{showFavorites=true;$("favoritesToggle").classList.add("active");$("allToggle").classList.remove("active");render()});
+$("notificationToggle").addEventListener("click",async()=>{if(!("Notification"in window)){alert("المتصفح لا يدعم إشعارات الويب.");return}const p=await Notification.requestPermission();$("notificationToggle").textContent=p==="granted"?"الإشعارات مفعّلة":"تعذر تفعيل الإشعارات"});
+$("clearHistory").addEventListener("click",()=>{history=[];write(K.hist,history);renderHistory()});$("closeQr").addEventListener("click",()=>$("qrDialog").classList.remove("open"));$("qrDialog").addEventListener("click",e=>{if(e.target===$("qrDialog"))$("qrDialog").classList.remove("open")});
+$("autoSelect").addEventListener("click",async()=>{const b=$("autoSelect"),box=$("smartResult");b.disabled=true;b.textContent="جاري تحليل النتائج…";box.classList.add("show");box.textContent="نقارن البروكسيات التي استجابت لفحص TCP من خادم الموقع. هذا ليس اختباراً مباشراً من هاتفك.";if(!proxies.length)await load();const best=[...proxies].sort((a,b)=>a.latency_ms-b.latency_ms)[0];box.replaceChildren();if(best){const title=document.createElement("strong"),p=document.createElement("p"),note=document.createElement("p"),go=document.createElement("button");title.textContent="المرشح الأسرع حسب فحص الخادم";p.textContent=best.server+":"+best.port+" • "+best.latency_ms+" ms TCP";note.textContent="جرّبه في Telegram لتختبر اتصالك الفعلي. لا يستطيع الموقع قراءة نتيجة تطبيق Telegram أو ضمان أنه الأفضل على شبكتك.";go.className="btn primary";go.textContent="جرّب هذا البروكسي في Telegram";go.addEventListener("click",()=>location.href=best.telegram_link);box.append(title,p,note,go)}else box.textContent="لا توجد بروكسيات مستجيبة حالياً.";b.disabled=false;b.textContent="افحص واختر الأنسب"});
+updateCounts();renderHistory();if("IntersectionObserver"in window){const observer=new IntersectionObserver(entries=>entries.forEach(x=>{if(x.isIntersecting){x.target.classList.add("visible");observer.unobserve(x.target)}}),{threshold:.12});document.querySelectorAll(".reveal").forEach(x=>observer.observe(x))}else document.querySelectorAll(".reveal").forEach(x=>x.classList.add("visible"));load();
 </script>
 </body>
 </html>
