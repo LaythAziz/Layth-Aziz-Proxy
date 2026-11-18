@@ -37,7 +37,7 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.doesNotMatch(html, /id="historyPanel"|تاريخ قياسات TCP|سجل الأداء|ملاحظة مهمة عن الـPing/);
   assert.match(html, /id="notificationToggle"/);
   assert.match(html, /id="qrDialog"/);
-  assert.match(html, /\[t\("check"\),"check"\]/);
+  assert.match(html, /id="settingsDialog"/);
   assert.match(html, /LANGUAGE_KEY="lap_language_v1"/);
   assert.match(html, /Notification\.requestPermission/);
   assert.match(html, /QRCode|qrserver\.com/);
@@ -51,7 +51,7 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.doesNotMatch(html, /PERSONAL TELEGRAM DIRECTORY|LAYTH AZIZ · TELEGRAM PROXY DIRECTORY|خدمة مستقلة لا تدير أو تملك البروكسيات العامة المدرجة/);
   assert.match(html, /class="footer"[^>]*>\s*<span[^>]*>© 2026 LAYTH AZIZ PROXY<\/span>/);
   assert.match(html, /\.footer\{[^}]*justify-content:center[^}]*text-align:center/);
-  assert.doesNotMatch(html, /GLOBAL NETWORK|GLOBAL TELEGRAM CONNECTIONS|hero-visual|globe-core/);
+  assert.match(html, /id="networkMap"/);
   assert.doesNotMatch(html, /إدارة البروكسيات السحابية|ADMIN_API_TOKEN|Hetzner|GitHub/);
 });
 
@@ -108,7 +108,7 @@ test("admin dashboard is separate and calls authenticated proxy management APIs"
   const html = await readFile(new URL("./admin.html", import.meta.url), "utf8");
   assert.match(html, /Authorization.*Bearer/);
   assert.match(html, /\/api\/proxies/);
-  assert.match(html, /\\[t\\("check"\\),"check"\\]/);
+  assert.match(html, /t\("check"\),"check"/);
   assert.match(html, /sessionStorage/);
   assert.doesNotMatch(html, /HETZNER_API_TOKEN|PROXY_SECRET_ENCRYPTION_KEY/);
 });
