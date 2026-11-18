@@ -275,9 +275,11 @@ document.getElementById("languageToggle").addEventListener("click",()=>{currentL
 const $=id=>document.getElementById(id),grid=$("proxyGrid"),status=$("status"),refresh=$("refresh");
 const K={fav:"lap_favorites_v1",avail:"lap_availability_v1",settings:"lap_settings_v1"};
 const read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
-const savedSettings=read(K.settings,{auto:true,interval:75});
+const rawSettings=read(K.settings,{});
+const savedSettings={auto:rawSettings?.auto!==false,interval:[45,75,120,300].includes(Number(rawSettings?.interval))?Number(rawSettings.interval):75};
 let refreshTimer=null;
-let proxies=[],favorites=new Set(read(K.fav,[])),showFavorites=false,visibleProxyCount=24;
+const savedFavorites=read(K.fav,[]);
+let proxies=[],favorites=new Set(Array.isArray(savedFavorites)?savedFavorites.filter(x=>typeof x==="string"):[]),showFavorites=false,visibleProxyCount=24;
 function statusText(s){status.replaceChildren();const dot=document.createElement("span");dot.className="status-indicator";const t=document.createElement("span");t.textContent=translateText(s);status.append(dot,t);applyLanguage()}
 function timeLabel(v){if(!v)return currentLanguage==="ar"?"غير معروف":"Unknown";const d=new Date(v);return Number.isNaN(d.getTime())?(currentLanguage==="ar"?"غير معروف":"Unknown"):d.toLocaleString(currentLanguage==="ar"?"ar-IQ":"en-US",{dateStyle:"short",timeStyle:"short"})}
 function updateCounts(){$("onlineCount").textContent=String(proxies.length);$("favoriteCount").textContent=String(favorites.size);updateDashboardStats()}
@@ -290,14 +292,14 @@ function updateDashboardStats(){
   $("statResponsive").textContent=String(proxies.length);
   $("statSources").textContent=(sources.sources_ok??"—")+"/"+(sources.sources_total??"—");
   $("statFavorites").textContent=String(favorites.size);
-  $("statUpdated").textContent=proxies.length?timeLabel(proxies[0]?.checked_at):"—";
+  $("statUpdated").textContent=sources.checked_at?timeLabel(sources.checked_at):"—";
   renderNetworkMap();
 }
 function applySettings(){
   $("autoRefreshToggle").checked=savedSettings.auto!==false;
   $("refreshInterval").value=String([45,75,120,300].includes(Number(savedSettings.interval))?savedSettings.interval:75);
-  if(refreshTimer)clearInterval(refreshTimer);
-  refreshTimer=setInterval(()=>{if(savedSettings.auto!==false&&!document.hidden)load({silent:true})},Number(savedSettings.interval)||75);
+  if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null;}
+  if(savedSettings.auto!==false)refreshTimer=setInterval(()=>{if(!document.hidden)load({silent:true})},savedSettings.interval);
 }
 function checkDrops(rows){const now=new Set(rows.map(x=>x.id)),old=read(K.avail,{}),dropped=[...favorites].filter(id=>old[id]===true&&!now.has(id));write(K.avail,Object.fromEntries([...favorites].map(id=>[id,now.has(id)])));if(dropped.length&&"Notification"in window&&Notification.permission==="granted")new Notification(translateText("توقف بروكسي مفضل"),{body:translateText("أحد البروكسيات المفضلة لم يظهر في آخر فحص.")})}
 function render(){const max=$("filter").value,sort=$("sort").value,query=($("proxySearch")?.value||"").trim().toLowerCase(),region=$("regionFilter")?.value||"all";let rows=proxies.filter(p=>(max==="all"||p.latency_ms<Number(max))&&(!showFavorites||favorites.has(p.id))&&(region==="all"||(region==="unknown"&&!p.region||region==="unknown"&&/unknown|غير محدد/i.test(p.region)))&&(!query||[p.server,p.port,p.source,p.region].some(v=>String(v||"").toLowerCase().includes(query))));rows.sort((a,b)=>sort==="fast"?a.latency_ms-b.latency_ms:b.latency_ms-a.latency_ms);grid.replaceChildren();grid.classList.add("stagger");if(!rows.length){const e=document.createElement("div");e.className="empty";e.textContent=showFavorites?"لا توجد مفضلات متاحة حالياً. العناصر المحفوظة تبقى على جهازك.":proxies.length?"لا توجد نتائج ضمن الفلتر.":"لم نعثر على بروكسيات استجابت للفحص حالياً.";grid.append(e);applyLanguage();return}
@@ -319,6 +321,7 @@ async function load({silent=false}={}){
     if(!response.ok)throw Error(translateText(data.error||"تعذر جلب القائمة"));
     if(!Array.isArray(data.proxies))throw Error("Invalid proxy response");
     proxies=data.proxies;
+    visibleProxyCount=24;
     window.lastProxyMeta=data;
     checkDrops(proxies);
     const message=currentLanguage==="ar"
