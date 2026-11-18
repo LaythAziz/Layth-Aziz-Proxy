@@ -37,7 +37,7 @@ label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:1
 <div class="step"><span class="num">2</span><div><b>تشغيل MTProxy</b><p>نستخدم ملفات Docker الموجودة في مستودع المشروع ونضبط Secret على السيرفر فقط.</p></div></div>
 <div class="step"><span class="num">3</span><div><b>إنشاء رابط Telegram</b><p>بعد التأكد من IP والمنفذ والسر، ننشئ الرابط ونختبر الاتصال فعلياً.</p></div></div></div>
 <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
-<a href="https://github.com/LaythAziz/Layth-Aziz-Proxy" target="_blank" rel="noreferrer" style="color:var(--cyan);text-decoration:none;font-size:13px">فتح مستودع GitHub ↗</a>
+
 <p class="small" style="margin-top:12px">GitHub Actions هنا للبناء والاختبار والنشر فقط، وليس لتشغيل بروكسي دائم على مدار الساعة.</p></aside>
 </div>
 <section class="card" style="margin-top:18px">
@@ -105,7 +105,7 @@ $("provisionProxy").addEventListener("click",async()=>{
     const p=data.proxy;
     result.replaceChildren();
     const heading=document.createElement("strong");heading.textContent="تم استلام بيانات السيرفر الحقيقي";
-    const details=document.createElement("p");details.textContent="IP: "+p.server+"\nTCP: "+p.port+"\nSecret: "+p.secret+"\nالموقع: "+p.provider_location+"\nالحالة: جارٍ إعداد MTProxy";
+    const details=document.createElement("p");details.textContent="IP: "+p.server+" | TCP: "+p.port+" | Secret: "+p.secret+" | الموقع: "+p.provider_location+" | الحالة: جارٍ إعداد MTProxy";
     const link=document.createElement("p");link.textContent=p.telegram_link;
     const copy=document.createElement("button");copy.className="btn btn-dark";copy.textContent="نسخ رابط Telegram";copy.onclick=async()=>{try{await navigator.clipboard.writeText(p.telegram_link);adminMessage.textContent="تم نسخ رابط Telegram.";}catch{adminMessage.textContent="تعذر النسخ التلقائي؛ انسخ الرابط يدوياً."; }};
     const open=document.createElement("button");open.className="btn btn-primary";open.textContent="فتح Telegram";open.onclick=()=>{location.href=p.telegram_link;};
