@@ -136,3 +136,19 @@ test("proxy endpoint bounds DNS lookup and limits expensive feed probing", async
   assert.match(api, /length:\s*12/);
   assert.match(probe, /DNS_TIMEOUT|dnsTimeoutMs/);
 });
+
+
+test("proxy cards are rendered in small batches with an explicit load-more control", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  assert.match(html, /visibleProxyCount=24/);
+  assert.match(html, /rows\.slice\(0,visibleProxyCount\)/);
+  assert.match(html, /visibleProxyCount\+=24/);
+  assert.match(html, /load-more/);
+  assert.doesNotMatch(html, /grid\.append\(more\)\}applyLanguage\(\)/);
+});
+
+test("routine refresh and card rendering do not rescan the entire document for translations", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  assert.match(html, /function statusText\(s\)\{[^}]*status\.append\(dot,t\)\}/);
+  assert.doesNotMatch(html, /grid\.append\(e\);applyLanguage\(\);return/);
+});
