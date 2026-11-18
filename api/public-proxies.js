@@ -1,8 +1,18 @@
-import { parsePublicProxyList } from "../lib/public-proxies.js";
+import { mergeProxyFeeds } from "../lib/public-proxies.js";
 import { probeMtproto } from "../lib/mtproto-probe.js";
 
-// The site uses only the four proxy links explicitly supplied by its owner.
-// No external proxy-feed websites are fetched or counted.
+// Restore every public feed previously used by the site.
+const SOURCES = [
+  "https://iwizard7.github.io/MTProxy_list/working.txt",
+  "https://iwizard7.github.io/MTProxy_list/stable.txt",
+  "https://iwizard7.github.io/MTProxy_list/best.txt",
+  "https://tgmtproxy.github.io/mtproxy/proxies.txt",
+  "https://raw.githubusercontent.com/Kira00011/MTProto/main/all_proxies.txt",
+  "https://raw.githubusercontent.com/dubblebyte/free-mtproto-proxies/main/all_proxies.txt",
+  "https://raw.githubusercontent.com/SoliSpirit/mtproto/master/all_proxies.txt"
+];
+
+// Extra proxies explicitly supplied by the site owner.
 const OWNER_PROXIES = [
   "tg://proxy?server=212.118.53.195&port=443&secret=dd4482437e89f9af8929514eee7faaf61f",
   "tg://proxy?server=103.161.35.23&port=443&secret=dd79e7010200010007f0030386e24c3add",
@@ -10,16 +20,41 @@ const OWNER_PROXIES = [
   "tg://proxy?server=gos.8f.dk.euv.4h.d.kw.68-309-27-46.ir&port=8443&secret=79e344818749bd7ac519130220c25d09"
 ];
 
+async function fetchCandidates() {
+  const feeds = await Promise.all(SOURCES.map(async source => {
+    try {
+      const response = await fetch(source, {
+        signal: AbortSignal.timeout(3200),
+        headers: { "User-Agent": "LaythAzizProxy/2.1", "Accept": "text/plain" }
+      });
+      if (!response.ok) return null;
+      const content = await response.text();
+      return { source: new URL(source).hostname, content: content.slice(0, 250000) };
+    } catch { return null; }
+  }));
+
+  const availableFeeds = feeds.filter(Boolean);
+  if (!availableFeeds.length) throw new Error("All public proxy feeds are unavailable");
+
+  // Include owner-supplied links in the same deduplicated pool as public feeds.
+  availableFeeds.push({
+    source: "owner-supplied",
+    content: OWNER_PROXIES.join("\\n")
+  });
+
+  return mergeProxyFeeds(availableFeeds, { limit: 36, perFeedLimit: 24 });
+}
+
 async function probeCandidates(candidates) {
   const checked = [];
   let cursor = 0;
-  const workers = Array.from({ length: 4 }, async () => {
+  const workers = Array.from({ length: 12 }, async () => {
     while (cursor < candidates.length) {
       const index = cursor++;
       const proxy = candidates[index];
       const result = await probeMtproto(proxy.server, proxy.port, proxy.secret, {
-        timeoutMs: 1800,
-        dnsTimeoutMs: 800
+        timeoutMs: 1400,
+        dnsTimeoutMs: 600
       });
       if (result.online) {
         const { secret, ...publicProxy } = proxy;
@@ -28,7 +63,7 @@ async function probeCandidates(candidates) {
           online: true,
           verification: result.verification,
           latency_ms: result.latency_ms,
-          region: "غير محدد",
+          region: "عالمي — الموقع غير محدد",
           checked_at: new Date().toISOString()
         };
       }
@@ -45,15 +80,16 @@ export default async function handler(req, res) {
   }
   res.setHeader("Cache-Control", "s-maxage=15, stale-while-revalidate=0");
   try {
-    const candidates = parsePublicProxyList(OWNER_PROXIES.join("\n"), { limit: 4 });
+    const candidates = await fetchCandidates();
     const proxies = await probeCandidates(candidates);
     return res.status(200).json({
       proxies,
       candidates_checked: candidates.length,
       tested_from: "Vercel server region",
-      verification: "MTProto req_pq_multi/resPQ"
+      verification: "MTProto req_pq_multi/resPQ",
+      note: "تُجمع القائمة من المصادر العامة مع البروكسيات التي أضافها مالك الموقع. لا يظهر البروكسي إلا بعد نجاح مصافحة MTProto والتحقق من nonce."
     });
   } catch {
-    return res.status(502).json({ error: "تعذر فحص البروكسيات حالياً. حاول مرة أخرى بعد قليل." });
+    return res.status(502).json({ error: "تعذر جلب أو فحص البروكسيات حالياً. حاول مرة أخرى بعد قليل." });
   }
 }
