@@ -157,7 +157,7 @@ test("every static Arabic interface label has an English translation", async () 
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   const dictionary = html.slice(html.indexOf("const translations="), html.indexOf("const reverseTranslations="));
   const keys = new Set([...dictionary.matchAll(/"([^"]*[\\u0600-\\u06FF][^"]*)"\\s*:/g)].map(match => match[1]));
-  const markup = html.slice(html.indexOf("<body>"), html.indexOf("<script type=\\"module\\">"));
+  const markup = html.slice(html.indexOf("<body>"), html.indexOf('<script type="module">'));
   const textNodes = [...markup.matchAll(/>([^<>]+)</g)].map(match => match[1].trim()).filter(value => /[\\u0600-\\u06FF]/.test(value));
   const attributes = [...markup.matchAll(/(?:aria-label|placeholder|alt)="([^"]*[\\u0600-\\u06FF][^"]*)"/g)].map(match => match[1]);
   const missing = [...new Set([...textNodes, ...attributes].filter(value => !keys.has(value)))];
@@ -167,7 +167,7 @@ test("every static Arabic interface label has an English translation", async () 
 test("English mode does not replace untranslated content with a generic error", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   assert.doesNotMatch(html, /return "Please try again\\."/);
-  assert.match(html, /document\.documentElement\.lang=toEnglish\?"en":"ar"/);
-  assert.match(html, /document\.documentElement\.dir=toEnglish\?"ltr":"rtl"/);
-  assert.match(html, /const reverseTranslations=\{\};for\(const \[ar,en\] of Object\.entries\(translations\)\)/);
+  assert.match(html, /document\\.documentElement\\.lang=toEnglish\\?"en":"ar"/);
+  assert.match(html, /document\\.documentElement\\.dir=toEnglish\\?"ltr":"rtl"/);
+  assert.match(html, /const reverseTranslations=\\{\\};for\\(const \\[ar,en\\] of Object\\.entries\\(translations\\)\\)/);
 });
