@@ -112,3 +112,27 @@ test("admin dashboard is separate and calls authenticated proxy management APIs"
   assert.match(html, /sessionStorage/);
   assert.doesNotMatch(html, /HETZNER_API_TOKEN|PROXY_SECRET_ENCRYPTION_KEY/);
 });
+
+
+test("public page initializes storage helpers before reading saved settings", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  const readDefinition = html.indexOf("const read=(k,d)=>");
+  const settingsRead = html.indexOf("const savedSettings=read(K.settings");
+  assert.ok(readDefinition >= 0 && settingsRead >= 0 && readDefinition < settingsRead,
+    "storage helper must exist before saved settings are read");
+});
+
+test("public page keeps proxy cards lightweight and avoids per-card entrance animations", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  assert.match(html, /\.proxy-card\.slice:after\s*\{[^}]*animation:\s*none/s);
+  assert.match(html, /\.proxy-grid\.stagger>\*\s*\{[^}]*animation:\s*none/s);
+  assert.match(html, /@media\(max-width:700px\)[\s\S]*?backdrop-filter:\s*none/s);
+});
+
+test("proxy endpoint bounds DNS lookup and limits expensive feed probing", async () => {
+  const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
+  const probe = await readFile(new URL("../lib/proxy-probe.js", import.meta.url), "utf8");
+  assert.match(api, /limit:\s*120/);
+  assert.match(api, /length:\s*12/);
+  assert.match(probe, /DNS_TIMEOUT|dnsTimeoutMs/);
+});
