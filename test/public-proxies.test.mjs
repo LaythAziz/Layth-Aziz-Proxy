@@ -90,15 +90,16 @@ test("candidate pool limit can exceed the old 32-proxy ceiling", async () => {
   assert.equal(mergeProxyFeeds([{ source: "large", content: rows.join("\n") }], { limit: 75 }).length, 75);
 });
 
-test("public proxy API aggregates multiple feeds and checks a larger rotating pool", async () => {
+test("public proxy API uses only the four owner-supplied links and no external feeds", async () => {
   const { readFile } = await import("node:fs/promises");
   const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
-  assert.ok(api.includes("MTProxy_list/working.txt"));
-  assert.ok(api.includes("tgmtproxy.github.io/mtproxy/proxies.txt"));
-  assert.ok(api.includes("dubblebyte/free-mtproto-proxies"));
-  assert.ok(api.includes("limit: 36"));
-  assert.ok(api.includes("length: 12"));
-  assert.ok(api.includes("s-maxage=20, stale-while-revalidate=0"));
+  assert.equal((api.match(/tg:\\/\\/proxy\\?/g) || []).length, 4);
+  assert.ok(api.includes("212.118.53.195"));
+  assert.ok(api.includes("103.161.35.23"));
+  assert.ok(api.includes("77.238.241.225"));
+  assert.ok(api.includes("gos.8f.dk.euv.4h.d.kw.68-309-27-46.ir"));
+  assert.doesNotMatch(api, /https:\\/\\//);
+  assert.ok(api.includes("s-maxage=15, stale-while-revalidate=0"));
 });
 
 test("site automatically refreshes and keeps the last good proxy list after an update error", async () => {
@@ -296,4 +297,13 @@ test("public proxy parser accepts standard, dd and ee secrets but rejects incomp
   ];
   const rows = parsePublicProxyList(links.join("\n"));
   assert.deepEqual(rows.map(row => row.server), ["standard.example", "padded.example", "faketls.example"]);
+});
+
+
+test("public page hides source websites, source counters, and last-update labels", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const html = await readFile(new URL("../site/index.html", import.meta.url), "utf8");
+  assert.doesNotMatch(html, /statSources|sources_ok|sources_total|مصدر عام|المصادر المتاحة|Available sources|آخر فحص:/);
+  assert.doesNotMatch(html, /regionFilter|last-checked/);
+  assert.match(html, /بحث بعنوان السيرفر أو المنفذ|ابحث بعنوان السيرفر أو المنفذ/);
 });
