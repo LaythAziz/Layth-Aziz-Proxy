@@ -91,3 +91,24 @@ test("complete bilingual interface translates every visible section and dynamic 
   assert.match(html, /الصورة الشخصية لليث عزيز/);
   assert.ok(html.includes('const label=toEnglish?"AR":"EN"'));
 });
+
+
+test("public dashboard exposes proxy health analytics, global map, search, and advanced filters", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  for (const id of ["statsPanel", "statResponsive", "statSources", "statFavorites", "proxySearch", "regionFilter", "networkMap", "mapStatus", "settingsDialog", "refreshInterval", "autoRefreshToggle", "copyTelegramLink"]) {
+    assert.ok(html.includes(`id="${id}"`), "missing dashboard feature: " + id);
+  }
+  assert.match(html, /navigator\.clipboard/);
+  assert.match(html, /lap_settings_v1/);
+  assert.match(html, /function updateDashboardStats/);
+  assert.match(html, /function renderNetworkMap/);
+});
+
+test("admin dashboard is separate and calls authenticated proxy management APIs", async () => {
+  const html = await readFile(new URL("./admin.html", import.meta.url), "utf8");
+  assert.match(html, /Authorization.*Bearer/);
+  assert.match(html, /\/api\/proxies/);
+  assert.match(html, /action.*check/);
+  assert.match(html, /sessionStorage/);
+  assert.doesNotMatch(html, /HETZNER_API_TOKEN|PROXY_SECRET_ENCRYPTION_KEY/);
+});
