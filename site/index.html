@@ -41,14 +41,28 @@ label{display:block;font-size:13px;color:#dce7f5;margin:16px 0 8px}input{width:1
 <p class="small" style="margin-top:12px">GitHub Actions هنا للبناء والاختبار والنشر فقط، وليس لتشغيل بروكسي دائم على مدار الساعة.</p></aside>
 </div>
 <section class="card" style="margin-top:18px">
-  <h2>إدارة البروكسيات المسجّلة</h2>
-  <p>هذه الإدارة تحفظ بيانات الخوادم التي تملكها وتفحص منفذ TCP. لا تنشئ VPS أو MTProto تلقائياً بدون مزوّد استضافة مربوط.</p>
+  <h2>إنشاء وإدارة البروكسيات السحابية</h2>
+  <p>أنشئ سيرفراً عاماً حقيقياً تلقائياً. سيُخصّص له IP ومنفذ TCP وSecret مستقل، ثم يبدأ إعداد MTProxy عليه.</p>
+  <label for="cloudName">اسم البروكسي الجديد</label>
+  <input id="cloudName" value="Layth Proxy" maxlength="60" />
+  <label for="cloudLocation">موقع السيرفر</label>
+  <select id="cloudLocation" style="width:100%;background:#080f1c;border:1px solid #2b3d57;color:white;border-radius:11px;padding:14px;font:inherit">
+    <option value="fsn1">ألمانيا — Falkenstein</option>
+    <option value="nbg1">ألمانيا — Nuremberg</option>
+    <option value="hel1">فنلندا — Helsinki</option>
+    <option value="ash">الولايات المتحدة — Ashburn</option>
+    <option value="hil">الولايات المتحدة — Hillsboro</option>
+    <option value="sin">سنغافورة — Singapore</option>
+  </select>
+  <button class="btn btn-primary wide" id="provisionProxy" type="button">توليد بروكسي وسيرفر حقيقي</button>
+  <div id="provisionResult" class="output" dir="ltr"></div>
+  <div class="note">يتطلب هذا الزر ربط HETZNER_API_TOKEN في Vercel. إنشاء السيرفر قد يترتب عليه رسوم من المزوّد؛ راجع السعر قبل التفعيل. عنوان IP لا يظهر إلا بعد أن يرجعه المزوّد فعلياً.</div>
   <label for="adminToken">مفتاح الإدارة (يبقى في جلسة المتصفح فقط)</label>
   <input id="adminToken" type="password" autocomplete="off" placeholder="ADMIN_API_TOKEN" />
   <div class="actions"><button class="btn btn-dark" id="loadProxies" type="button">تحديث القائمة</button><button class="btn btn-dark" id="clearToken" type="button">مسح المفتاح</button></div>
   <div class="note" style="margin-top:14px">لربط الإدارة تحتاج إعداد Supabase ومفاتيح البيئة في Vercel. لا تضع أي مفتاح سري داخل ملفات GitHub.</div>
   <div style="height:1px;background:var(--line);margin:20px 0"></div>
-  <h2 style="font-size:15px">تسجيل سيرفر موجود لديك</h2>
+  <h2 style="font-size:15px">إضافة سيرفر موجود مسبقاً (اختياري)</h2>
   <div class="fieldrow">
     <div><label for="proxyName">اسم البروكسي</label><input id="proxyName" placeholder="My Telegram Proxy" /></div>
     <div><label for="proxyHost">IP أو Domain</label><input id="proxyHost" placeholder="203.0.113.10" /></div>
@@ -76,10 +90,32 @@ const adminToken=$("adminToken"), adminMessage=$("adminMessage"), proxyList=$("p
 adminToken.value=sessionStorage.getItem("laythProxyAdminToken")||"";
 function authHeaders(){const token=adminToken.value.trim();if(token)sessionStorage.setItem("laythProxyAdminToken",token);return {"Authorization":"Bearer "+token,"Content-Type":"application/json"};}
 async function api(path,options={}){const response=await fetch(path,{...options,headers:{...authHeaders(),...(options.headers||{})}});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||("HTTP "+response.status));return data;}
-function showProxyRows(items){proxyList.replaceChildren();if(!items.length){proxyList.textContent="لا توجد بروكسيات مسجّلة بعد.";return;}for(const item of items){const row=document.createElement("div");row.className="step";row.style.cssText="padding:13px;border:1px solid var(--line);border-radius:12px;display:block";const title=document.createElement("b");title.textContent=item.name+" — "+item.server+":"+item.port;const status=document.createElement("p");status.className="small";status.textContent="الحالة: "+item.status+" • زمن الاستجابة: "+(item.latency_ms==null?"غير مقاس":item.latency_ms+" ms")+" • آخر فحص: "+(item.last_check||"لم يُفحص");const actions=document.createElement("div");actions.className="actions";const check=document.createElement("button");check.className="btn btn-dark";check.textContent="فحص TCP";check.onclick=async()=>{try{const r=await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action:"check"})});adminMessage.textContent=r.status==="online"?"المنفذ يستجيب • "+r.latency_ms+" ms":"المنفذ لا يستجيب. هذا فحص TCP وليس اختبار MTProto كامل.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};const del=document.createElement("button");del.className="btn btn-dark";del.textContent="حذف السجل";del.onclick=async()=>{if(!confirm("حذف سجل هذا البروكسي؟"))return;try{await api("/api/proxies/"+encodeURIComponent(item.id),{method:"DELETE"});await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};actions.append(check,del);row.append(title,status,actions);proxyList.append(row);}}
+function showProxyRows(items){proxyList.replaceChildren();if(!items.length){proxyList.textContent="لا توجد بروكسيات مسجّلة بعد.";return;}for(const item of items){const row=document.createElement("div");row.className="step";row.style.cssText="padding:13px;border:1px solid var(--line);border-radius:12px;display:block";const title=document.createElement("b");title.textContent=item.name+" — "+item.server+":"+item.port;const status=document.createElement("p");status.className="small";status.textContent="الحالة: "+item.status+" • "+(item.provider_name==="hetzner"?"سيرفر سحابي • "+(item.provider_location||""):"سيرفر خارجي")+" • زمن الاستجابة: "+(item.latency_ms==null?"غير مقاس":item.latency_ms+" ms")+" • آخر فحص: "+(item.last_check||"لم يُفحص");const actions=document.createElement("div");actions.className="actions";
+if(item.provider_name==="hetzner"){const power=document.createElement("button");power.className="btn btn-dark";power.textContent=item.status==="stopped"?"تشغيل السيرفر":"إيقاف السيرفر";power.onclick=async()=>{try{const action=item.status==="stopped"?"start":"stop";await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action})});adminMessage.textContent=action==="stop"?"تم إرسال أمر إيقاف السيرفر.":"تم إرسال أمر تشغيل السيرفر؛ انتظر اكتمال الإقلاع.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};actions.append(power);}
+const check=document.createElement("button");check.className="btn btn-dark";check.textContent="فحص TCP";check.onclick=async()=>{try{const r=await api("/api/proxies/"+encodeURIComponent(item.id),{method:"POST",body:JSON.stringify({action:"check"})});adminMessage.textContent=r.status==="online"?"المنفذ يستجيب • "+r.latency_ms+" ms":"المنفذ لا يستجيب. هذا فحص TCP وليس اختبار MTProto كامل.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};const del=document.createElement("button");del.className="btn btn-dark";del.textContent="حذف السجل";del.onclick=async()=>{if(!confirm(item.provider_name==="hetzner"?"سيتم حذف السيرفر السحابي نهائياً وإيقاف البروكسي. هل تريد المتابعة؟":"حذف سجل هذا البروكسي؟"))return;try{await api("/api/proxies/"+encodeURIComponent(item.id),{method:"DELETE"});await refreshProxies();}catch(e){adminMessage.textContent=e.message;}};actions.append(check,del);row.append(title,status,actions);proxyList.append(row);}}
 async function refreshProxies(){try{adminMessage.textContent="جاري تحميل القائمة…";const data=await api("/api/proxies");showProxyRows(data.proxies||[]);adminMessage.textContent="تم تحديث القائمة.";}catch(e){adminMessage.textContent=e.message;}}
 $("loadProxies").addEventListener("click",refreshProxies);
 $("clearToken").addEventListener("click",()=>{sessionStorage.removeItem("laythProxyAdminToken");adminToken.value="";adminMessage.textContent="تم مسح مفتاح الإدارة من جلسة المتصفح.";});
+$("provisionProxy").addEventListener("click",async()=>{
+  const button=$("provisionProxy"), result=$("provisionResult");
+  if(!confirm("سيتم إنشاء سيرفر سحابي حقيقي وقد تُفرض رسوم من مزوّد الاستضافة. هل تريد المتابعة؟"))return;
+  button.disabled=true;button.textContent="جاري إنشاء السيرفر…";result.classList.remove("show");
+  try{
+    const data=await api("/api/proxies",{method:"POST",body:JSON.stringify({action:"provision",name:$("cloudName").value,location:$("cloudLocation").value})});
+    const p=data.proxy;
+    result.replaceChildren();
+    const heading=document.createElement("strong");heading.textContent="تم استلام بيانات السيرفر الحقيقي";
+    const details=document.createElement("p");details.textContent="IP: "+p.server+"\nTCP: "+p.port+"\nSecret: "+p.secret+"\nالموقع: "+p.provider_location+"\nالحالة: جارٍ إعداد MTProxy";
+    const link=document.createElement("p");link.textContent=p.telegram_link;
+    const copy=document.createElement("button");copy.className="btn btn-dark";copy.textContent="نسخ رابط Telegram";copy.onclick=async()=>{try{await navigator.clipboard.writeText(p.telegram_link);adminMessage.textContent="تم نسخ رابط Telegram.";}catch{adminMessage.textContent="تعذر النسخ التلقائي؛ انسخ الرابط يدوياً."; }};
+    const open=document.createElement("button");open.className="btn btn-primary";open.textContent="فتح Telegram";open.onclick=()=>{location.href=p.telegram_link;};
+    const buttons=document.createElement("div");buttons.className="actions";buttons.append(copy,open);
+    result.append(heading,details,link,buttons);result.classList.add("show");
+    adminMessage.textContent=data.note||"تم إنشاء السيرفر.";
+    await refreshProxies();
+  }catch(e){adminMessage.textContent=e.message;result.textContent=e.message;result.classList.add("show");}
+  finally{button.disabled=false;button.textContent="توليد بروكسي وسيرفر حقيقي";}
+});
 $("registerProxy").addEventListener("click",async()=>{try{const body={name:$("proxyName").value,server:$("proxyHost").value,port:$("proxyPort").value,secret:$("proxySecret").value};await api("/api/proxies",{method:"POST",body:JSON.stringify(body)});$("proxySecret").value="";adminMessage.textContent="تم حفظ سجل السيرفر فقط. هذا لا ينشئ سيرفراً ولا يشغّل MTProxy.";await refreshProxies();}catch(e){adminMessage.textContent=e.message;}});
 
 </script></body></html>
