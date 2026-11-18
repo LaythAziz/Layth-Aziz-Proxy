@@ -39,7 +39,7 @@ async function fetchCandidates() {
   // Include owner-supplied links in the same deduplicated pool as public feeds.
   availableFeeds.push({
     source: "owner-supplied",
-    content: OWNER_PROXIES.join("\\n")
+    content: OWNER_PROXIES.join("\n")
   });
 
   return mergeProxyFeeds(availableFeeds, { limit: 36, perFeedLimit: 24 });
