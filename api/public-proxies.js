@@ -1,9 +1,13 @@
-import { parsePublicProxyList } from "../lib/public-proxies.js";
+import { mergeProxyFeeds } from "../lib/public-proxies.js";
 import { probeTcp } from "../lib/proxy-probe.js";
 
 const SOURCES = [
   "https://iwizard7.github.io/MTProxy_list/working.txt",
   "https://iwizard7.github.io/MTProxy_list/stable.txt",
+  "https://iwizard7.github.io/MTProxy_list/best.txt",
+  "https://tgmtproxy.github.io/mtproxy/proxies.txt",
+  "https://raw.githubusercontent.com/Kira00011/MTProto/main/all_proxies.txt",
+  "https://raw.githubusercontent.com/dubblebyte/free-mtproto-proxies/main/all_proxies.txt",
   "https://raw.githubusercontent.com/SoliSpirit/mtproto/master/all_proxies.txt"
 ];
 
@@ -11,63 +15,16 @@ async function fetchCandidates() {
   const feeds = await Promise.all(SOURCES.map(async source => {
     try {
       const response = await fetch(source, {
-        signal: AbortSignal.timeout(5500),
-        headers: { "User-Agent": "LaythAzizProxy/2.0", "Accept": "text/plain" }
+        signal: AbortSignal.timeout(6500),
+        headers: { "User-Agent": "LaythAzizProxy/2.1", "Accept": "text/plain" }
       });
-      if (!response.ok) return [];
-      return parsePublicProxyList(await response.text(), { limit: 80 })
-        .map(row => ({ ...row, source: new URL(source).hostname }));
-    } catch { return []; }
+      if (!response.ok) return null;
+      const content = await response.text();
+      return { source: new URL(source).hostname, content };
+    } catch { return null; }
   }));
-  const candidates = [];
-  const seen = new Set();
-  for (const rows of feeds) {
-    for (const row of rows) {
-      if (seen.has(row.id)) continue;
-      seen.add(row.id);
-      candidates.push(row);
-    }
-  }
-  return candidates.slice(0, 32);
-}
-
-async function probeCandidates(candidates) {
-  const checked = [];
-  let cursor = 0;
-  const workers = Array.from({ length: 8 }, async () => {
-    while (cursor < candidates.length) {
-      const index = cursor++;
-      const proxy = candidates[index];
-      const result = await probeTcp(proxy.server, proxy.port, { timeoutMs: 1200 });
-      if (result.online) checked[index] = {
-        ...proxy,
-        online: true,
-        latency_ms: result.latency_ms,
-        region: "عالمي — الموقع غير محدد",
-        checked_at: new Date().toISOString()
-      };
-    }
-  });
-  await Promise.all(workers);
-  return checked.filter(Boolean).sort((a, b) => a.latency_ms - b.latency_ms);
-}
-
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-  res.setHeader("Cache-Control", "s-maxage=45, stale-while-revalidate=120");
-  try {
-    const candidates = await fetchCandidates();
-    const proxies = await probeCandidates(candidates);
-    return res.status(200).json({
-      proxies,
-      checked_at: new Date().toISOString(),
-      tested_from: "Vercel server region",
-      note: "يتم عرض البروكسيات التي استجابت لفحص TCP فقط. هذا الفحص من خادم الموقع وليس من جهازك داخل العراق، ولا يثبت اكتمال اتصال MTProto."
-    });
-  } catch {
-    return res.status(502).json({ error: "تعذر جلب أو فحص البروكسيات حالياً. حاول مرة أخرى بعد قليل." });
-  }
+  const availableFeeds = feeds.filter(Boolean);
+  const candidates = mergeProxyFeeds(availableFeeds, { limit: 240, perFeedLimit: 160 });
+  if (!availableFeeds.length) throw new Error("All public proxy feeds are unavailable");
+  return { candidates, sources_ok: availableFeeds.length, sources_total: SOURCES.length };
 }
