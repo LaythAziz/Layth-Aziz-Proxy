@@ -1,5 +1,5 @@
 import { mergeProxyFeeds } from "../lib/public-proxies.js";
-import { probeTcp } from "../lib/proxy-probe.js";
+import { probeMtproto } from "../lib/mtproto-probe.js";
 
 const SOURCES = [
   "https://iwizard7.github.io/MTProxy_list/working.txt",
@@ -15,7 +15,7 @@ async function fetchCandidates() {
   const feeds = await Promise.all(SOURCES.map(async source => {
     try {
       const response = await fetch(source, {
-        signal: AbortSignal.timeout(4500),
+        signal: AbortSignal.timeout(3200),
         headers: { "User-Agent": "LaythAzizProxy/2.1", "Accept": "text/plain" }
       });
       if (!response.ok) return null;
@@ -26,7 +26,7 @@ async function fetchCandidates() {
   const availableFeeds = feeds.filter(Boolean);
   if (!availableFeeds.length) throw new Error("All public proxy feeds are unavailable");
   return {
-    candidates: mergeProxyFeeds(availableFeeds, { limit: 120, perFeedLimit: 80 }),
+    candidates: mergeProxyFeeds(availableFeeds, { limit: 36, perFeedLimit: 24 }),
     sources_ok: availableFeeds.length,
     sources_total: SOURCES.length
   };
@@ -39,14 +39,18 @@ async function probeCandidates(candidates) {
     while (cursor < candidates.length) {
       const index = cursor++;
       const proxy = candidates[index];
-      const result = await probeTcp(proxy.server, proxy.port, { timeoutMs: 750, dnsTimeoutMs: 700 });
-      if (result.online) checked[index] = {
-        ...proxy,
-        online: true,
-        latency_ms: result.latency_ms,
-        region: "عالمي — الموقع غير محدد",
-        checked_at: new Date().toISOString()
-      };
+      const result = await probeMtproto(proxy.server, proxy.port, proxy.secret, { timeoutMs: 1400, dnsTimeoutMs: 600 });
+      if (result.online) {
+        const { secret, ...publicProxy } = proxy;
+        checked[index] = {
+          ...publicProxy,
+          online: true,
+          verification: result.verification,
+          latency_ms: result.latency_ms,
+          region: "عالمي — الموقع غير محدد",
+          checked_at: new Date().toISOString()
+        };
+      }
     }
   });
   await Promise.all(workers);
@@ -69,7 +73,8 @@ export default async function handler(req, res) {
       sources_total,
       checked_at: new Date().toISOString(),
       tested_from: "Vercel server region",
-      note: "تُجمع القائمة من عدة مصادر عامة وتُعاد مراجعتها عند كل تحديث. يتم عرض البروكسيات التي استجابت لفحص TCP فقط. هذا الفحص من خادم الموقع وليس من جهازك داخل العراق، ولا يثبت اكتمال اتصال MTProto."
+      verification: "MTProto req_pq_multi/resPQ",
+      note: "تُجمع القائمة من عدة مصادر عامة. لا يظهر البروكسي إلا بعد نجاح طلب MTProto req_pq_multi واستلام resPQ يحمل نفس nonce، باستخدام عنوانه ومنفذه وSecret. الفحص من خادم الموقع وليس من جهازك داخل العراق، ولا يثبت جودة الاتصال على كل شركة إنترنت عراقية."
     });
   } catch {
     return res.status(502).json({ error: "تعذر جلب أو فحص البروكسيات حالياً. حاول مرة أخرى بعد قليل." });
