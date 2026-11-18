@@ -27,7 +27,7 @@ test("control panel does not contain escaped newline text that breaks HTML or Ja
   assert.doesNotMatch(html, /\\n/);
 });
 
-test("dashboard exposes cloud provisioning and admin proxy controls", async () => {
+test("dashboard shows only the global proxy directory and removes cloud/admin sections", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   assert.match(html, /id="provisionProxy"/);
   assert.match(html, /id="adminToken"/);
