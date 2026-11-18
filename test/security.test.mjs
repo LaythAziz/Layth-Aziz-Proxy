@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { encryptSecret, decryptSecret, validateProxyInput } from "./security.js";
+import { encryptSecret, decryptSecret, validateProxyInput } from "../lib/proxy-security.js";
 
 test("validates and normalizes proxy details", () => {
   const value = validateProxyInput({name:"Primary",server:"proxy.example.com",port:"443",secret:"A".repeat(32)});
