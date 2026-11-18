@@ -1,0 +1,11 @@
+{
+  "name": "layth-aziz-proxy",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test site/proxy.test.mjs api/_lib/security.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
