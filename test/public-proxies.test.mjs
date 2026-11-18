@@ -218,6 +218,8 @@ test("English language dictionary is built after all translations and never repl
   assert.doesNotMatch(html, /return "Please try again\."/);
   assert.match(html, /"اجتاز مصافحة MTProto"/);
   assert.match(html, /"MTProto handshake verified"/);
+  assert.match(html, /translations\["عالمي — الموقع غير محدد"\]="Global — location unverified"/);
+  assert.doesNotMatch(html, /ms TCP/);
 });
 
 
