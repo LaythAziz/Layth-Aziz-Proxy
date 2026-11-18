@@ -98,7 +98,7 @@ test("public proxy API aggregates multiple feeds and checks a larger rotating po
   assert.ok(api.includes("dubblebyte/free-mtproto-proxies"));
   assert.ok(api.includes("limit: 120"));
   assert.ok(api.includes("length: 12"));
-  assert.ok(api.includes("s-maxage=45, stale-while-revalidate=120"));
+  assert.ok(api.includes("s-maxage=20, stale-while-revalidate=0"));
 });
 
 test("site automatically refreshes and keeps the last good proxy list after an update error", async () => {
@@ -106,8 +106,8 @@ test("site automatically refreshes and keeps the last good proxy list after an u
   const html = await readFile(new URL("../site/index.html", import.meta.url), "utf8");
   assert.ok(html.includes("if(savedSettings.auto!==false)refreshTimer=setInterval(()=>{if(!document.hidden)load({silent:true})},savedSettings.interval)"));
   assert.ok(html.includes('document.addEventListener("visibilitychange",()=>{if(!document.hidden&&savedSettings.auto!==false)load({silent:true})})'));
-  assert.ok(html.includes("Refresh failed — showing the last successful list"));
-  assert.ok(html.includes("if(proxies.length){"));
+  assert.ok(html.includes("Could not verify proxies right now — hidden until a successful check"));
+  assert.ok(html.includes("proxies=[];"));
 });
 
 
