@@ -14,8 +14,8 @@ body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 12% 0%,#163
 body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.12;background-image:linear-gradient(#7893b51a 1px,transparent 1px),linear-gradient(90deg,#7893b51a 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,#000,transparent 75%)}
 .wrap{width:min(1080px,calc(100% - 34px));margin:auto;padding:26px 0 48px;position:relative}
 header{display:flex;align-items:center;justify-content:space-between;gap:18px}
-.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#183b51,#122139);border:1px solid #39627b;color:var(--cyan);font-weight:950;letter-spacing:-2px;box-shadow:0 0 35px #62e5e822}
-.brand-name{font-size:14px;font-weight:900;letter-spacing:1.5px}.brand-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:46px;height:46px;border-radius:15px;display:block;overflow:hidden;background:linear-gradient(145deg,#183b51,#122139);border:1px solid #39627b;box-shadow:0 0 35px #62e5e822}.brand-avatar{display:block;width:100%;height:100%;object-fit:cover;object-position:center 24%}
+.brand-name{font-size:14px;font-weight:900;letter-spacing:1.5px}
 .live{display:flex;align-items:center;gap:8px;color:#b8f8dc;border:1px solid #235541;background:#10281f;padding:9px 13px;border-radius:99px;font-size:11px}
 .live:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
 .hero{padding:76px 0 46px;display:grid;grid-template-columns:minmax(0,1fr) 245px;align-items:center;gap:30px}.hero-copy{min-width:0}.quick-panel,.feature-row,.smart-result{grid-column:1/-1}.profile-photo-card{position:relative;justify-self:end;width:100%;max-width:245px;aspect-ratio:4/5;border:1px solid #42627e;border-radius:26px;padding:8px;background:linear-gradient(145deg,#1a3550,#0c1727);box-shadow:0 24px 65px #0008,0 0 45px #62e5e81a;overflow:hidden;animation:portraitFloat 6s ease-in-out infinite}.profile-photo-card:before{content:"";position:absolute;inset:8px;border:1px solid #ffffff20;border-radius:19px;z-index:1;pointer-events:none}.profile-photo{display:block;width:100%;height:100%;object-fit:cover;object-position:center 24%;border-radius:19px;filter:saturate(1.06) contrast(1.03)}.profile-photo-caption{position:absolute;z-index:2;inset:auto 16px 16px;padding:12px 14px;border:1px solid #ffffff25;border-radius:14px;background:#071321c9;backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:4px}.profile-photo-caption strong{font-size:12px;letter-spacing:1.7px}.profile-photo-caption span{font-size:9px;color:#9db6d1;letter-spacing:1.5px}@keyframes portraitFloat{50%{transform:translateY(-7px)}}
@@ -53,7 +53,7 @@ select{background:#101b2c;color:#eaf3ff;border:1px solid #2b405e;border-radius:1
 .empty{grid-column:1/-1;text-align:center;padding:34px 18px;border:1px dashed #2b405e;border-radius:18px;color:var(--muted);line-height:2;font-size:13px}
 .skeleton{height:174px;border-radius:18px;background:linear-gradient(100deg,#101a2a 20%,#1b2c43 38%,#101a2a 58%);background-size:200% 100%;animation:shimmer 1.35s linear infinite}
 @keyframes shimmer{to{background-position-x:-200%}}
-.footer{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-top:32px;padding-top:18px;border-top:1px solid #1c2a3e;color:#6f829c;font-size:10px}
+.footer{display:flex;justify-content:center;text-align:center;gap:15px;flex-wrap:wrap;margin-top:32px;padding-top:18px;border-top:1px solid #1c2a3e;color:#6f829c;font-size:10px}
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
 .reveal.visible{opacity:1;transform:none}
 .mask-reveal{animation:maskReveal 1s cubic-bezier(.2,.7,.2,1) both}
@@ -74,13 +74,13 @@ select{background:#101b2c;color:#eaf3ff;border:1px solid #2b405e;border-radius:1
 <body>
 <main class="wrap">
 <header class="whip-pan">
-  <div class="brand"><div class="brand-mark">LA</div><div><div class="brand-name">LAYTH AZIZ PROXY</div><div class="brand-sub">PERSONAL TELEGRAM DIRECTORY</div></div></div>
+  <div class="brand"><div class="brand-mark"><img class="brand-avatar" src="https://raw.githubusercontent.com/LaythAziz/Profile-/main/assets/layth.jpg" alt="Layth Aziz"></div><div><div class="brand-name">LAYTH AZIZ PROXY</div></div></div>
   <div class="live">فحص مباشر</div>
 </header>
 
 <section class="hero">
   <div class="hero-copy">
-    <div class="eyebrow mask-reveal">LAYTH AZIZ · TELEGRAM PROXY DIRECTORY</div>
+    <div class="eyebrow mask-reveal">LAYTH AZIZ · TELEGRAM PROXY</div>
     <h1 class="zoom-through">اتصالك يبدأ<br><span class="gradient">باختيار أذكى.</span></h1>
     <p class="reveal">اكتشف بروكسيات Telegram العامة المتاحة، واحفظ المفضلة لديك واتصل مباشرة بخطوة واحدة.</p>
     <div class="hero-actions reveal"><button class="btn primary" id="refresh">استكشف البروكسيات <span aria-hidden="true">↗</span></button><span class="micro">قائمة متجددة باستمرار</span></div>
@@ -107,7 +107,7 @@ select{background:#101b2c;color:#eaf3ff;border:1px solid #2b405e;border-radius:1
 </section>
 
 <div class="dialog-backdrop" id="qrDialog" role="dialog" aria-modal="true" aria-labelledby="qrTitle"><div class="dialog"><h3 id="qrTitle">امسح للربط عبر Telegram</h3><p>افتح Telegram وامسح الرمز للربط السريع.</p><img class="qr-image" id="qrImage" alt="رمز QR لرابط بروكسي Telegram"><button class="btn secondary" id="closeQr">إغلاق</button></div></div>
-<footer class="footer"><span>© 2026 LAYTH AZIZ PROXY</span><span>خدمة مستقلة لا تدير أو تملك البروكسيات العامة المدرجة</span></footer>
+<footer class="footer"><span>© 2026 LAYTH AZIZ PROXY</span></footer>
 </main>
 <script type="module">
 const $=id=>document.getElementById(id),grid=$("proxyGrid"),status=$("status"),refresh=$("refresh");
