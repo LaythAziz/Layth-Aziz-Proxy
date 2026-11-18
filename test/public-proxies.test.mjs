@@ -89,3 +89,22 @@ test("candidate pool limit can exceed the old 32-proxy ceiling", async () => {
   );
   assert.equal(mergeProxyFeeds([{ source: "large", content: rows.join("\n") }], { limit: 75 }).length, 75);
 });
+
+test("public proxy API aggregates multiple feeds and checks a larger rotating pool", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
+  assert.match(api, /MTProxy_list\\/working\\.txt/);
+  assert.match(api, /tgmtproxy\\.github\\.io\\/mtproxy\\/proxies\\.txt/);
+  assert.match(api, /dubblebyte\\/free-mtproto-proxies/);
+  assert.match(api, /limit: 240/);
+  assert.match(api, /length: 20/);
+  assert.match(api, /s-maxage=30, stale-while-revalidate=60/);
+});
+
+test("site automatically refreshes and keeps the last good proxy list after an update error", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const html = await readFile(new URL("../site/index.html", import.meta.url), "utf8");
+  assert.match(html, /setInterval\\(\\(\\)=>\\{if\\(!document\\.hidden\\)load\\(\\{silent:true\\}\\)\\},75000\\)/);
+  assert.match(html, /Refresh failed — showing the last successful list/);
+  assert.match(html, /if\\(proxies\\.length\\)\\{/);
+});
