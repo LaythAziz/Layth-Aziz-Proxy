@@ -1,45 +1,26 @@
-import { mergeProxyFeeds } from "../lib/public-proxies.js";
+import { parsePublicProxyList } from "../lib/public-proxies.js";
 import { probeMtproto } from "../lib/mtproto-probe.js";
 
-const SOURCES = [
-  "https://iwizard7.github.io/MTProxy_list/working.txt",
-  "https://iwizard7.github.io/MTProxy_list/stable.txt",
-  "https://iwizard7.github.io/MTProxy_list/best.txt",
-  "https://tgmtproxy.github.io/mtproxy/proxies.txt",
-  "https://raw.githubusercontent.com/Kira00011/MTProto/main/all_proxies.txt",
-  "https://raw.githubusercontent.com/dubblebyte/free-mtproto-proxies/main/all_proxies.txt",
-  "https://raw.githubusercontent.com/SoliSpirit/mtproto/master/all_proxies.txt"
+// The site uses only the four proxy links explicitly supplied by its owner.
+// No external proxy-feed websites are fetched or counted.
+const OWNER_PROXIES = [
+  "tg://proxy?server=212.118.53.195&port=443&secret=dd4482437e89f9af8929514eee7faaf61f",
+  "tg://proxy?server=103.161.35.23&port=443&secret=dd79e7010200010007f0030386e24c3add",
+  "tg://proxy?server=77.238.241.225&port=8880&secret=79e344818749bd7ac519130220c25d09",
+  "tg://proxy?server=gos.8f.dk.euv.4h.d.kw.68-309-27-46.ir&port=8443&secret=79e344818749bd7ac519130220c25d09"
 ];
-
-async function fetchCandidates() {
-  const feeds = await Promise.all(SOURCES.map(async source => {
-    try {
-      const response = await fetch(source, {
-        signal: AbortSignal.timeout(3200),
-        headers: { "User-Agent": "LaythAzizProxy/2.1", "Accept": "text/plain" }
-      });
-      if (!response.ok) return null;
-      const content = await response.text();
-      return { source: new URL(source).hostname, content: content.slice(0, 250000) };
-    } catch { return null; }
-  }));
-  const availableFeeds = feeds.filter(Boolean);
-  if (!availableFeeds.length) throw new Error("All public proxy feeds are unavailable");
-  return {
-    candidates: mergeProxyFeeds(availableFeeds, { limit: 36, perFeedLimit: 24 }),
-    sources_ok: availableFeeds.length,
-    sources_total: SOURCES.length
-  };
-}
 
 async function probeCandidates(candidates) {
   const checked = [];
   let cursor = 0;
-  const workers = Array.from({ length: 12 }, async () => {
+  const workers = Array.from({ length: 4 }, async () => {
     while (cursor < candidates.length) {
       const index = cursor++;
       const proxy = candidates[index];
-      const result = await probeMtproto(proxy.server, proxy.port, proxy.secret, { timeoutMs: 1400, dnsTimeoutMs: 600 });
+      const result = await probeMtproto(proxy.server, proxy.port, proxy.secret, {
+        timeoutMs: 1800,
+        dnsTimeoutMs: 800
+      });
       if (result.online) {
         const { secret, ...publicProxy } = proxy;
         checked[index] = {
@@ -47,7 +28,7 @@ async function probeCandidates(candidates) {
           online: true,
           verification: result.verification,
           latency_ms: result.latency_ms,
-          region: "عالمي — الموقع غير محدد",
+          region: "غير محدد",
           checked_at: new Date().toISOString()
         };
       }
@@ -62,21 +43,17 @@ export default async function handler(req, res) {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ error: "Method not allowed" });
   }
-  res.setHeader("Cache-Control", "s-maxage=20, stale-while-revalidate=0");
+  res.setHeader("Cache-Control", "s-maxage=15, stale-while-revalidate=0");
   try {
-    const { candidates, sources_ok, sources_total } = await fetchCandidates();
+    const candidates = parsePublicProxyList(OWNER_PROXIES.join("\\n"), { limit: 4 });
     const proxies = await probeCandidates(candidates);
     return res.status(200).json({
       proxies,
       candidates_checked: candidates.length,
-      sources_ok,
-      sources_total,
-      checked_at: new Date().toISOString(),
       tested_from: "Vercel server region",
-      verification: "MTProto req_pq_multi/resPQ",
-      note: "تُجمع القائمة من عدة مصادر عامة. لا يظهر البروكسي إلا بعد نجاح طلب MTProto req_pq_multi واستلام resPQ يحمل نفس nonce، باستخدام عنوانه ومنفذه وSecret. الفحص من خادم الموقع وليس من جهازك داخل العراق، ولا يثبت جودة الاتصال على كل شركة إنترنت عراقية."
+      verification: "MTProto req_pq_multi/resPQ"
     });
   } catch {
-    return res.status(502).json({ error: "تعذر جلب أو فحص البروكسيات حالياً. حاول مرة أخرى بعد قليل." });
+    return res.status(502).json({ error: "تعذر فحص البروكسيات حالياً. حاول مرة أخرى بعد قليل." });
   }
 }
