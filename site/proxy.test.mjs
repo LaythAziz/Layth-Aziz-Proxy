@@ -34,7 +34,7 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.match(html, /id="sort"/);
   assert.match(html, /id="autoSelect"/);
   assert.match(html, /id="favoritesToggle"/);
-  assert.match(html, /id="historyPanel"/);
+  assert.doesNotMatch(html, /id="historyPanel"|تاريخ قياسات TCP|سجل الأداء|ملاحظة مهمة عن الـPing/);
   assert.match(html, /id="notificationToggle"/);
   assert.match(html, /id="qrDialog"/);
   assert.match(html, /last_checked_at/);
@@ -46,5 +46,7 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.match(html, /whip-pan/);
   assert.match(html, /slice/);
   assert.match(html, /zoom-through/);
+  assert.match(html, /LaythAziz\\/Profile-\\/main\\/assets\\/layth\\.jpg/);
+  assert.doesNotMatch(html, /GLOBAL NETWORK|GLOBAL TELEGRAM CONNECTIONS|hero-visual|globe-core/);
   assert.doesNotMatch(html, /إدارة البروكسيات السحابية|ADMIN_API_TOKEN|Hetzner|GitHub/);
 });
