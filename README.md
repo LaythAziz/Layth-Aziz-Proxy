@@ -83,9 +83,17 @@ The repository includes a Vercel-compatible API for an authenticated proxy regis
 - `PROXY_SECRET_ENCRYPTION_KEY`: exactly 64 hexadecimal characters. Generate with `openssl rand -hex 32`.
 - `SUPABASE_URL`: your Supabase project URL.
 - `SUPABASE_SERVICE_ROLE_KEY`: Supabase service-role key. Server-side only; never prefix it with `NEXT_PUBLIC_`.
+- `HETZNER_API_TOKEN`: Hetzner Cloud API token with permission to create, power on/off, and delete servers. Keep it only in Vercel environment variables.
+- Optional: `HETZNER_LOCATION` (default `fsn1`), `HETZNER_SERVER_TYPE` (default `cx22`), and `HETZNER_IMAGE` (default `ubuntu-24.04`).
 
 Run the SQL in `supabase/mtproxy_instances.sql` in the Supabase SQL editor, then add all four values in Vercel → Project Settings → Environment Variables and redeploy. Do not commit real credentials.
 
-### Current boundary
+### Cloud provisioning
 
-This API is a management foundation, not a cloud-server marketplace. It does not provision a VPS, start or stop a remote MTProxy process, or promise 24/7 uptime. Those actions require an actual infrastructure provider account/API and a running host with public TCP access. With no VPS/provider account configured, the app must show that provisioning is unavailable rather than fabricate an online proxy. Deleting a row removes only its registry record; it does not shut down a remote server.
+The dashboard can now request a real Hetzner Cloud server when `HETZNER_API_TOKEN` is configured. For each new proxy it generates a cryptographically random MTProto secret and an available high TCP port, asks Hetzner to create an Ubuntu server in the selected location, obtains the server's assigned public IPv4 address, and boots MTProxy through cloud-init + systemd (automatic restart enabled). The secret is encrypted in Supabase and returned to the admin once with the Telegram deep link.
+
+The API can start, stop, check TCP reachability, and delete a provisioned Hetzner server. Deleting a manually registered external server still deletes only its registry record.
+
+**Important:** Hetzner is a paid cloud provider. Creating a server can incur charges and requires the owner's Hetzner account and API token. A public IP is assigned by the provider; it is never fabricated by the app. A newly created server may need several minutes to compile MTProxy and finish booting. TCP reachability is not a complete Telegram MTProto handshake test.
+
+No hosting provider can guarantee absolute zero downtime. Service restarts automatically after process failure, but availability still depends on the provider, network, account status, and maintenance. Without the provider token configured, the create action returns a setup error and does not create a fake proxy.
