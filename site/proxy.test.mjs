@@ -47,6 +47,10 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.match(html, /slice/);
   assert.match(html, /zoom-through/);
   assert.ok(html.includes("https://raw.githubusercontent.com/LaythAziz/Profile-/main/assets/layth.jpg"));
+  assert.match(html, /class="brand-mark"[^>]*>\s*<img[^>]+profile-photo/);
+  assert.doesNotMatch(html, /PERSONAL TELEGRAM DIRECTORY|LAYTH AZIZ · TELEGRAM PROXY DIRECTORY|خدمة مستقلة لا تدير أو تملك البروكسيات العامة المدرجة/);
+  assert.match(html, /class="footer"[^>]*>\s*<span[^>]*>© 2026 LAYTH AZIZ PROXY<\/span>/);
+  assert.match(html, /\.footer\{[^}]*justify-content:center[^}]*text-align:center/);
   assert.doesNotMatch(html, /GLOBAL NETWORK|GLOBAL TELEGRAM CONNECTIONS|hero-visual|globe-core/);
   assert.doesNotMatch(html, /إدارة البروكسيات السحابية|ADMIN_API_TOKEN|Hetzner|GitHub/);
 });
