@@ -32,6 +32,7 @@ import { EventEmitter } from "node:events";
 test("TCP probe reports latency only after a successful connection", async () => {
   const result = await probeTcp("proxy.example", 443, {
     timeoutMs: 50,
+    lookup: async () => [{ address: "8.8.8.8", family: 4 }],
     connect: () => {
       const socket = new EventEmitter();
       socket.destroy = () => {};
@@ -46,6 +47,7 @@ test("TCP probe reports latency only after a successful connection", async () =>
 test("TCP probe marks refused connections offline without inventing latency", async () => {
   const result = await probeTcp("proxy.example", 443, {
     timeoutMs: 50,
+    lookup: async () => [{ address: "8.8.8.8", family: 4 }],
     connect: () => {
       const socket = new EventEmitter();
       socket.destroy = () => {};
