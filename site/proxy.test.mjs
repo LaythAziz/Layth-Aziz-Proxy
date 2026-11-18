@@ -32,6 +32,15 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.match(html, /id="proxyGrid"/);
   assert.match(html, /id="refresh"/);
   assert.match(html, /id="sort"/);
+  assert.match(html, /id="autoSelect"/);
+  assert.match(html, /id="favoritesToggle"/);
+  assert.match(html, /id="historyPanel"/);
+  assert.match(html, /id="notificationToggle"/);
+  assert.match(html, /id="qrDialog"/);
+  assert.match(html, /last_checked_at/);
+  assert.match(html, /localStorage/);
+  assert.match(html, /Notification\.requestPermission/);
+  assert.match(html, /QRCode|qrserver\.com/);
   assert.match(html, /mask-reveal/);
   assert.match(html, /stagger/);
   assert.match(html, /whip-pan/);
