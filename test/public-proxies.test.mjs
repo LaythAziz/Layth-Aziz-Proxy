@@ -221,3 +221,64 @@ test("English language dictionary is built after all translations and never repl
   assert.match(html, /"اجتاز مصافحة MTProto"/);
   assert.match(html, /"MTProto handshake verified"/);
 });
+
+
+test("MTProto probe validates Fake-TLS ee secrets and then verifies the Telegram nonce", async () => {
+  const { probeMtproto } = await import("../lib/mtproto-probe.js");
+  const { createHash, createHmac, createCipheriv, randomBytes } = await import("node:crypto");
+  const { EventEmitter } = await import("node:events");
+  const secret16 = Buffer.from("0123456789abcdef0123456789abcdef", "hex");
+  const nonce = Buffer.from("102132435465768798a9bacbdcedfe0f", "hex");
+  const domain = "www.example.com";
+  const secret = "ee" + secret16.toString("hex") + Buffer.from(domain).toString("hex");
+  const socket = new EventEmitter();
+  socket.destroy = () => {};
+  socket.setTimeout = () => {};
+  let writes = 0;
+  socket.write = data => {
+    writes++;
+    if (writes === 1) {
+      const hello = Buffer.from(data);
+      assert.equal(hello.length, 517);
+      const clientDigest = Buffer.from(hello.subarray(11, 43));
+      const sessionId = hello.subarray(44, 76);
+      const sh = Buffer.alloc(76);
+      sh[0] = 2; sh.writeUIntBE(sh.length - 4, 1, 3); sh[4] = 3; sh[5] = 3;
+      randomBytes(32).copy(sh, 6);
+      sh[38] = 32; sessionId.copy(sh, 39);
+      sh[71] = 0x13; sh[72] = 0x01; sh[73] = 0; sh[74] = 0; sh[75] = 0;
+      const first = Buffer.alloc(5 + sh.length);
+      first.set([0x16, 0x03, 0x03], 0); first.writeUInt16BE(sh.length, 3); sh.copy(first, 5);
+      const ccs = Buffer.from([0x14, 0x03, 0x03, 0x00, 0x01, 0x01]);
+      const app = Buffer.from([0x17, 0x03, 0x03, 0x00, 0x00]);
+      const reply = Buffer.concat([first, ccs, app]);
+      const zeroed = Buffer.from(reply); zeroed.fill(0, 11, 43);
+      createHmac("sha256", secret16).update(Buffer.concat([clientDigest, zeroed])).digest().copy(reply, 11);
+      queueMicrotask(() => socket.emit("data", reply));
+    } else {
+      const record = Buffer.from(data);
+      assert.equal(record[0], 0x17);
+      const obfsHeader = record.subarray(5, 69);
+      const reversed = Buffer.from(obfsHeader).reverse();
+      const key = createHash("sha256").update(Buffer.concat([reversed.subarray(8, 40), secret16])).digest();
+      const iv = reversed.subarray(40, 56);
+      const body = Buffer.alloc(80);
+      body.writeUInt32LE(0x05162463, 0); nonce.copy(body, 4); randomBytes(16).copy(body, 20);
+      body[36] = 8; randomBytes(8).copy(body, 37); body.writeUInt32LE(0x1cb5c415, 48); body.writeUInt32LE(3, 52); randomBytes(24).copy(body, 56);
+      const message = Buffer.alloc(20 + body.length);
+      message.writeBigUInt64LE(0n, 0); message.writeBigUInt64LE((BigInt(Math.floor(Date.now() / 1000)) << 32n) + 4n, 8); message.writeUInt32LE(body.length, 16); body.copy(message, 20);
+      const framed = Buffer.alloc(4 + message.length + 4); framed.writeUInt32LE(message.length + 4, 0); message.copy(framed, 4); randomBytes(4).copy(framed, 4 + message.length);
+      const encrypted = createCipheriv("aes-256-ctr", key, iv).update(framed);
+      const response = Buffer.alloc(5 + encrypted.length); response.set([0x17, 0x03, 0x03], 0); response.writeUInt16BE(encrypted.length, 3); encrypted.copy(response, 5);
+      queueMicrotask(() => socket.emit("data", response));
+    }
+    return true;
+  };
+  const result = await probeMtproto("proxy.example", 443, secret, {
+    timeoutMs: 300, dnsTimeoutMs: 50, nonce,
+    lookup: async () => [{ address: "8.8.8.8", family: 4 }],
+    connect: () => { queueMicrotask(() => socket.emit("connect")); return socket; }
+  });
+  assert.equal(result.online, true);
+  assert.equal(result.verification, "mtproto-respq");
+});
