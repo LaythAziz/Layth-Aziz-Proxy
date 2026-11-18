@@ -133,7 +133,8 @@ test("proxy endpoint bounds DNS lookup and limits expensive feed probing", async
   const probe = await readFile(new URL("../lib/mtproto-probe.js", import.meta.url), "utf8");
   assert.match(api, /limit:\s*36/);
   assert.match(api, /length:\s*12/);
-  assert.match(probe, /dnsTimeoutMs/);\n  assert.match(api, /probeMtproto/);
+  assert.match(probe, /dnsTimeoutMs/);
+  assert.match(api, /probeMtproto/);
 });
 
 
