@@ -78,7 +78,7 @@ test("complete bilingual interface translates every visible section and dynamic 
     "الصورة الشخصية لليث عزيز", "آخر تحديث للقائمة", "على هذا الجهاز",
     "شبكة البروكسيات العالمية", "المتاح حالياً فقط — الترتيب من الأقل زمناً إلى الأعلى",
     "أقل من 100 ms", "أقل من 250 ms", "أقل من 500 ms",
-    "استجاب لفحص TCP", "زمن TCP من السيرفر", "مصدر عام",
+    "اجتاز مصافحة MTProto", "زمن مصافحة MTProto من السيرفر", "مصدر عام",
     "لا توجد مفضلات متاحة حالياً. العناصر المحفوظة تبقى على جهازك.",
     "لا توجد نتائج ضمن الفلتر.", "لم نعثر على بروكسيات استجابت للفحص حالياً.",
     "نجمع المصادر ونفحص المنافذ المتاحة…", "تعذر جلب القائمة",
@@ -150,4 +150,24 @@ test("routine refresh and card rendering do not rescan the entire document for t
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
   assert.match(html, /function statusText\(s\)\{[^}]*status\.append\(dot,t\)\}/);
   assert.doesNotMatch(html, /grid\.append\(e\);applyLanguage\(\);return/);
+});
+
+
+test("every static Arabic interface label has an English translation", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  const dictionary = html.slice(html.indexOf("const translations="), html.indexOf("const reverseTranslations="));
+  const keys = new Set([...dictionary.matchAll(/"([^"]*[\\u0600-\\u06FF][^"]*)"\\s*:/g)].map(match => match[1]));
+  const markup = html.slice(html.indexOf("<body>"), html.indexOf("<script type=\\"module\\">"));
+  const textNodes = [...markup.matchAll(/>([^<>]+)</g)].map(match => match[1].trim()).filter(value => /[\\u0600-\\u06FF]/.test(value));
+  const attributes = [...markup.matchAll(/(?:aria-label|placeholder|alt)="([^"]*[\\u0600-\\u06FF][^"]*)"/g)].map(match => match[1]);
+  const missing = [...new Set([...textNodes, ...attributes].filter(value => !keys.has(value)))];
+  assert.deepEqual(missing, []);
+});
+
+test("English mode does not replace untranslated content with a generic error", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  assert.doesNotMatch(html, /return "Please try again\\."/);
+  assert.match(html, /document\.documentElement\.lang=toEnglish\?"en":"ar"/);
+  assert.match(html, /document\.documentElement\.dir=toEnglish\?"ltr":"rtl"/);
+  assert.match(html, /const reverseTranslations=\{\};for\(const \[ar,en\] of Object\.entries\(translations\)\)/);
 });
