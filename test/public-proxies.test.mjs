@@ -108,6 +108,7 @@ test("public proxy API restores all seven public feeds and adds the four owner-s
   assert.ok(api.includes("77.238.241.225"));
   assert.ok(api.includes("gos.8f.dk.euv.4h.d.kw.68-309-27-46.ir"));
   assert.match(api, /mergeProxyFeeds/);
+  assert.doesNotMatch(api, /All public proxy feeds are unavailable/);
   assert.match(api, /limit:\s*36/);
   assert.match(api, /probeMtproto\(proxy\.server, proxy\.port, proxy\.secret/);
   assert.ok(api.includes("s-maxage=15, stale-while-revalidate=0"));
