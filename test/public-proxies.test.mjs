@@ -67,3 +67,25 @@ test("TCP probe refuses private and documentation IP ranges", async () => {
   assert.equal(isPublicIPv4("10.0.0.2"), false);
   assert.equal(isPublicIPv4("203.0.113.7"), false);
 });
+
+test("merges multiple public feeds into a larger deduplicated candidate pool", async () => {
+  const { mergeProxyFeeds } = await import("../lib/public-proxies.js");
+  const a = "tg://proxy?server=one.example&port=443&secret=0123456789abcdef0123456789abcdef";
+  const b = "tg://proxy?server=two.example&port=443&secret=0123456789abcdef0123456789abcdef";
+  const c = "tg://proxy?server=three.example&port=443&secret=0123456789abcdef0123456789abcdef";
+  const merged = mergeProxyFeeds([
+    { source: "feed-a", content: [a, b].join("\\n") },
+    { source: "feed-b", content: [b, c].join("\\n") }
+  ], { limit: 10 });
+  assert.deepEqual(merged.map(row => row.id), ["one.example:443", "two.example:443", "three.example:443"]);
+  assert.equal(merged[0].source, "feed-a");
+  assert.equal(merged[2].source, "feed-b");
+});
+
+test("candidate pool limit can exceed the old 32-proxy ceiling", async () => {
+  const { mergeProxyFeeds } = await import("../lib/public-proxies.js");
+  const rows = Array.from({ length: 75 }, (_, i) =>
+    `tg://proxy?server=p${i}.example&port=443&secret=0123456789abcdef0123456789abcdef`
+  );
+  assert.equal(mergeProxyFeeds([{ source: "large", content: rows.join("\\n") }], { limit: 75 }).length, 75);
+});
