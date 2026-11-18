@@ -29,9 +29,13 @@ test("control panel does not contain escaped newline text that breaks HTML or Ja
 
 test("dashboard shows only the global proxy directory and removes cloud/admin sections", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
-  assert.match(html, /id="provisionProxy"/);
-  assert.match(html, /id="adminToken"/);
-  assert.match(html, /id="proxyList"/);
-  assert.match(html, /reveal-link/);
-  assert.match(html, /أدوات إضافية/);
+  assert.match(html, /id="proxyGrid"/);
+  assert.match(html, /id="refresh"/);
+  assert.match(html, /id="sort"/);
+  assert.match(html, /mask-reveal/);
+  assert.match(html, /stagger/);
+  assert.match(html, /whip-pan/);
+  assert.match(html, /slice/);
+  assert.match(html, /zoom-through/);
+  assert.doesNotMatch(html, /إدارة البروكسيات السحابية|ADMIN_API_TOKEN|Hetzner|GitHub/);
 });
