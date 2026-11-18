@@ -55,3 +55,13 @@ test("TCP probe marks refused connections offline without inventing latency", as
   });
   assert.deepEqual(result, { online: false, latency_ms: null });
 });
+
+
+test("TCP probe refuses private and documentation IP ranges", async () => {
+  const { isPublicIPv4 } = await import("../lib/proxy-probe.js");
+  assert.equal(isPublicIPv4("8.8.8.8"), true);
+  assert.equal(isPublicIPv4("127.0.0.1"), false);
+  assert.equal(isPublicIPv4("192.168.1.1"), false);
+  assert.equal(isPublicIPv4("10.0.0.2"), false);
+  assert.equal(isPublicIPv4("203.0.113.7"), false);
+});
