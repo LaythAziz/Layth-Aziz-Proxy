@@ -10,6 +10,8 @@ test("parses valid Telegram MTProto links from a public feed", () => {
   assert.equal(rows.length, 2);
   assert.equal(rows[0].server, "one.example");
   assert.equal(rows[1].telegram_link.startsWith("tg://proxy?"), true);
+  const fakeTls = parsePublicProxyList("tg://proxy?server=tls.example&port=443&secret=ee0123456789abcdef0123456789abcdef6578616d706c652e636f6d");
+  assert.equal(fakeTls.length, 1);
 });
 
 test("ignores malformed entries and deduplicates identical endpoints", () => {
