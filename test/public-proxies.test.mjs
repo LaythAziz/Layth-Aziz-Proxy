@@ -282,3 +282,18 @@ test("MTProto probe validates Fake-TLS ee secrets and then verifies the Telegram
   assert.equal(result.online, true);
   assert.equal(result.verification, "mtproto-respq");
 });
+
+
+test("public proxy parser accepts standard, dd and ee secrets but rejects incomplete tagged secrets", () => {
+  const base = "0123456789abcdef0123456789abcdef";
+  const domain = Buffer.from("www.example.com").toString("hex");
+  const links = [
+    `tg://proxy?server=standard.example&port=443&secret=${base}`,
+    `tg://proxy?server=padded.example&port=443&secret=dd${base}`,
+    `tg://proxy?server=faketls.example&port=443&secret=ee${base}${domain}`,
+    `tg://proxy?server=badfaketls.example&port=443&secret=ee${base}`,
+    `tg://proxy?server=baddd.example&port=443&secret=dd${base}${domain}`
+  ];
+  const rows = parsePublicProxyList(links.join("\n"));
+  assert.deepEqual(rows.map(row => row.server), ["standard.example", "padded.example", "faketls.example"]);
+});
