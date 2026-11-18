@@ -90,15 +90,26 @@ test("candidate pool limit can exceed the old 32-proxy ceiling", async () => {
   assert.equal(mergeProxyFeeds([{ source: "large", content: rows.join("\n") }], { limit: 75 }).length, 75);
 });
 
-test("public proxy API uses only the four owner-supplied links and no external feeds", async () => {
+test("public proxy API restores all seven public feeds and adds the four owner-supplied links", async () => {
   const { readFile } = await import("node:fs/promises");
   const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
-  assert.equal((api.match(/tg:\/\/proxy\?/g) || []).length, 4);
+  const sources = [
+    "https://iwizard7.github.io/MTProxy_list/working.txt",
+    "https://iwizard7.github.io/MTProxy_list/stable.txt",
+    "https://iwizard7.github.io/MTProxy_list/best.txt",
+    "https://tgmtproxy.github.io/mtproxy/proxies.txt",
+    "https://raw.githubusercontent.com/Kira00011/MTProto/main/all_proxies.txt",
+    "https://raw.githubusercontent.com/dubblebyte/free-mtproto-proxies/main/all_proxies.txt",
+    "https://raw.githubusercontent.com/SoliSpirit/mtproto/master/all_proxies.txt"
+  ];
+  for (const source of sources) assert.ok(api.includes(source), "missing restored feed: " + source);
   assert.ok(api.includes("212.118.53.195"));
   assert.ok(api.includes("103.161.35.23"));
   assert.ok(api.includes("77.238.241.225"));
   assert.ok(api.includes("gos.8f.dk.euv.4h.d.kw.68-309-27-46.ir"));
-  assert.doesNotMatch(api, /https:\/\//);
+  assert.match(api, /mergeProxyFeeds/);
+  assert.match(api, /limit:\s*36/);
+  assert.match(api, /probeMtproto\(proxy\.server, proxy\.port, proxy\.secret/);
   assert.ok(api.includes("s-maxage=15, stale-while-revalidate=0"));
 });
 
