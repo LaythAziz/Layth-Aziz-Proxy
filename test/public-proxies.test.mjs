@@ -135,7 +135,7 @@ test("public page removes old proxy entries when a fresh verification request fa
   assert.match(html, /لم يمكن التحقق من البروكسيات الآن/);
 });
 
-test("API only includes proxies whose TCP connection probe succeeded", async () => {
+test("API only includes proxies whose Telegram MTProto handshake succeeded", async () => {
   const { readFile } = await import("node:fs/promises");
   const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
   assert.match(api, /if \(result\.online\)/);
@@ -206,11 +206,11 @@ test("MTProto probe accepts only a matching req_pq_multi/resPQ nonce response", 
   assert.ok(writes[1].length > 40);
 });
 
-test("MTProto probe rejects unsupported TLS secrets instead of publishing unverified links", async () => {
+test("MTProto probe rejects malformed secrets before opening a socket", async () => {
   const { probeMtproto } = await import("../lib/mtproto-probe.js");
-  const result = await probeMtproto("proxy.example", 443, "ee" + "ab".repeat(16) + Buffer.from("example.com").toString("hex"));
+  const result = await probeMtproto("proxy.example", 443, "not-a-valid-secret");
   assert.equal(result.online, false);
-  assert.equal(result.reason, "unsupported-secret-mode");
+  assert.equal(result.reason, "invalid-secret");
 });
 
 test("English language dictionary is built after all translations and never replaces missing text with a generic error", async () => {
