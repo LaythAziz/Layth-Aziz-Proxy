@@ -104,12 +104,11 @@ test("public dashboard exposes proxy health analytics, global map, search, and a
   assert.match(html, /function renderNetworkMap/);
 });
 
-test("admin dashboard is separate and calls authenticated proxy management APIs", async () => {
+test("admin route clearly stays disabled until its private API and database exist", async () => {
   const html = await readFile(new URL("./admin.html", import.meta.url), "utf8");
-  assert.match(html, /Authorization.*Bearer/);
-  assert.match(html, /\/api\/proxies/);
-  assert.match(html, /t\("check"\),"check"/);
-  assert.match(html, /sessionStorage/);
+  assert.match(html, /Admin panel is not enabled yet/);
+  assert.match(html, /Do not enter any token or password/);
+  assert.doesNotMatch(html, /\/api\/proxies|sessionStorage|Authorization.*Bearer/);
   assert.doesNotMatch(html, /HETZNER_API_TOKEN|PROXY_SECRET_ENCRYPTION_KEY/);
 });
 
