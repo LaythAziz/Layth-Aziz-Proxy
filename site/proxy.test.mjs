@@ -19,3 +19,10 @@ test("generates a 16-byte hexadecimal secret", () => {
   const fakeCrypto = {getRandomValues(bytes) { bytes.fill(171); return bytes; }};
   assert.equal(generateSecret(fakeCrypto), "ab".repeat(16));
 });
+
+import { readFile } from "node:fs/promises";
+
+test("control panel does not contain escaped newline text that breaks HTML or JavaScript", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  assert.doesNotMatch(html, /\\\\n/);
+});
