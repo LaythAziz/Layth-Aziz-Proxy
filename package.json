@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test site/proxy.test.mjs test/security.test.mjs test/hetzner.test.mjs"
+    "test": "node --test site/proxy.test.mjs test/security.test.mjs test/hetzner.test.mjs test/deployment.test.mjs"
   },
   "engines": {
     "node": ">=22"
