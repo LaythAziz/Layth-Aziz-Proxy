@@ -1,5 +1,5 @@
-import { requireAdmin, encryptSecret, validateProxyInput } from "./_lib/security.js";
-import { insertProxy, listProxies, storeReady } from "./_lib/store.js";
+import { requireAdmin, encryptSecret, validateProxyInput } from "../lib/proxy-security.js";
+import { insertProxy, listProxies, storeReady } from "../lib/proxy-store.js";
 
 export default async function handler(req, res) {
   if (!requireAdmin(req)) return res.status(401).json({ error: "غير مصرح" });
