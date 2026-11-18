@@ -54,3 +54,14 @@ test("dashboard shows only the global proxy directory and removes cloud/admin se
   assert.doesNotMatch(html, /GLOBAL NETWORK|GLOBAL TELEGRAM CONNECTIONS|hero-visual|globe-core/);
   assert.doesNotMatch(html, /إدارة البروكسيات السحابية|ADMIN_API_TOKEN|Hetzner|GitHub/);
 });
+
+test("site supports Arabic and English with a persistent language switch", async () => {
+  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+  assert.match(html, /id="languageToggle"/);
+  assert.match(html, /localStorage\.getItem\(["']lap_language_v1["']\)/);
+  assert.match(html, /document\.documentElement\.dir/);
+  assert.match(html, /document\.documentElement\.lang/);
+  assert.match(html, /TELEGRAM PROXY/);
+  assert.match(html, /Explore proxies|Explore Telegram proxies/);
+  assert.match(html, /aria-label="Language"/);
+});
