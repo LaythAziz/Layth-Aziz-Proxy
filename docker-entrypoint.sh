@@ -25,7 +25,6 @@ cd /var/lib/mtproxy
 echo "Downloading current Telegram MTProxy server secret and config..."
 curl --fail --silent --show-error --location https://core.telegram.org/getProxySecret -o proxy-secret
 curl --fail --silent --show-error --location https://core.telegram.org/getProxyConfig -o proxy-multi.conf
-chown mtproxy:mtproxy proxy-secret proxy-multi.conf
 chmod 0644 proxy-secret proxy-multi.conf
 
 echo "Starting LAYTH AZIZ PROXY on container TCP port 8443..."
