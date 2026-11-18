@@ -34,8 +34,6 @@ async function fetchCandidates() {
   }));
 
   const availableFeeds = feeds.filter(Boolean);
-  if (!availableFeeds.length) throw new Error("All public proxy feeds are unavailable");
-
   // Include owner-supplied links in the same deduplicated pool as public feeds.
   availableFeeds.push({
     source: "owner-supplied",
