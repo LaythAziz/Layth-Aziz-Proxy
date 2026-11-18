@@ -96,7 +96,7 @@ test("public proxy API aggregates multiple feeds and checks a larger rotating po
   assert.ok(api.includes("MTProxy_list/working.txt"));
   assert.ok(api.includes("tgmtproxy.github.io/mtproxy/proxies.txt"));
   assert.ok(api.includes("dubblebyte/free-mtproto-proxies"));
-  assert.ok(api.includes("limit: 120"));
+  assert.ok(api.includes("limit: 36"));
   assert.ok(api.includes("length: 12"));
   assert.ok(api.includes("s-maxage=20, stale-while-revalidate=0"));
 });
@@ -138,9 +138,9 @@ test("public page removes old proxy entries when a fresh verification request fa
 test("API only includes proxies whose TCP connection probe succeeded", async () => {
   const { readFile } = await import("node:fs/promises");
   const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
-  assert.match(api, /if \(result\.online\) checked\[index\]/);
+  assert.match(api, /if \(result\.online\)/);
   assert.match(api, /return checked\.filter\(Boolean\)/);
-  assert.match(api, /tested_from: "Vercel server region"/);
+  assert.match(api, /tested_from: "Vercel server region"/);\n  assert.match(api, /MTProto req_pq_multi\/resPQ/);\n  assert.match(api, /probeMtproto\(proxy\.server, proxy\.port, proxy\.secret/);
 });
 
 
