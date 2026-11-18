@@ -58,3 +58,16 @@ The Compose file publishes the configured host TCP port to container TCP port 84
 
 - https://core.telegram.org/proxy
 - https://github.com/TelegramMessenger/MTProxy
+
+
+## GitHub Pages control panel
+
+The Arabic control panel lives in `site/`. GitHub Actions runs its Node.js tests and publishes the static site to GitHub Pages after pushes to `main`.
+
+The panel generates a Telegram `tg://proxy` link locally in the visitor's browser from a server address, TCP port, and 32-character hex secret. It does not transmit or store the secret. **It does not create, host, or activate a proxy server.** A real MTProxy process must already be running on a reachable public server before its link can connect.
+
+After the first successful Pages deployment, the site URL is normally:
+
+`https://laythaziz.github.io/Layth-Aziz-Proxy/`
+
+If Pages is not enabled yet, open repository Settings → Pages and choose GitHub Actions as the build and deployment source.
