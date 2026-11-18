@@ -304,6 +304,6 @@ test("public page hides source websites, source counters, and last-update labels
   const { readFile } = await import("node:fs/promises");
   const html = await readFile(new URL("../site/index.html", import.meta.url), "utf8");
   assert.doesNotMatch(html, /statSources|sources_ok|sources_total|مصدر عام|المصادر المتاحة|Available sources|آخر فحص:/);
-  assert.doesNotMatch(html, /regionFilter|last-checked/);
+  assert.doesNotMatch(html, /regionFilter|last-checked|timeLabel\\(/);
   assert.match(html, /بحث بعنوان السيرفر أو المنفذ|ابحث بعنوان السيرفر أو المنفذ/);
 });
