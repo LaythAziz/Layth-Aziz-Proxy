@@ -79,10 +79,10 @@ test("complete bilingual interface translates every visible section and dynamic 
     "الصورة الشخصية لليث عزيز", "على هذا الجهاز",
     "شبكة البروكسيات العالمية", "المتاح حالياً فقط — الترتيب من الأقل زمناً إلى الأعلى",
     "أقل من 100 ms", "أقل من 250 ms", "أقل من 500 ms",
-    "اجتاز مصافحة MTProto", "زمن مصافحة MTProto من السيرفر", "مصدر عام",
+    "اجتاز مصافحة MTProto", "زمن مصافحة MTProto من السيرفر",
     "لا توجد مفضلات متاحة حالياً. العناصر المحفوظة تبقى على جهازك.",
     "لا توجد نتائج ضمن الفلتر.", "لم نعثر على بروكسيات استجابت للفحص حالياً.",
-    "نجمع المصادر ونفحص المنافذ المتاحة…", "تعذر جلب القائمة",
+    "تم فحص ", "تعذر جلب القائمة",
     "الإشعارات مفعّلة", "تعذر تفعيل الإشعارات",
     "المرشح الأسرع بعد التحقق من MTProto", "لا توجد بروكسيات مستجيبة حالياً."
   ]) assert.ok(html.includes(phrase), "missing Arabic source phrase: " + phrase);
@@ -96,10 +96,10 @@ test("complete bilingual interface translates every visible section and dynamic 
 
 test("public dashboard exposes proxy health analytics, search, and advanced filters", async () => {
   const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
-  for (const id of ["statsPanel", "statResponsive", "statSources", "statFavorites", "proxySearch", "regionFilter", "settingsDialog", "refreshInterval", "autoRefreshToggle"]) {
+  for (const id of ["statsPanel", "statResponsive", "statFavorites", "proxySearch", "settingsDialog", "refreshInterval", "autoRefreshToggle"]) {
     assert.ok(html.includes(`id="${id}"`), "missing dashboard feature: " + id);
   }
-  assert.match(html, /navigator\.clipboard/);
+  assert.doesNotMatch(html, /statSources|regionFilter|مصدر عام|المصادر المتاحة/);\n  assert.match(html, /navigator\\.clipboard/);
   assert.match(html, /lap_settings_v1/);
   assert.match(html, /function updateDashboardStats/);
   assert.doesNotMatch(html, /id="statUpdated"|آخر تحديث للقائمة/);
@@ -133,8 +133,8 @@ test("public page keeps proxy cards lightweight and avoids per-card entrance ani
 test("proxy endpoint bounds DNS lookup and limits expensive feed probing", async () => {
   const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
   const probe = await readFile(new URL("../lib/mtproto-probe.js", import.meta.url), "utf8");
-  assert.match(api, /limit:\s*36/);
-  assert.match(api, /length:\s*12/);
+  assert.match(api, /limit:\s*4/);
+  assert.match(api, /length:\s*4/);
   assert.match(probe, /dnsTimeoutMs/);
   assert.match(api, /probeMtproto/);
 });
