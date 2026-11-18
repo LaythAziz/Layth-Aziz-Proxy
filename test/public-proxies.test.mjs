@@ -93,12 +93,12 @@ test("candidate pool limit can exceed the old 32-proxy ceiling", async () => {
 test("public proxy API uses only the four owner-supplied links and no external feeds", async () => {
   const { readFile } = await import("node:fs/promises");
   const api = await readFile(new URL("../api/public-proxies.js", import.meta.url), "utf8");
-  assert.equal((api.match(/tg:\\/\\/proxy\\?/g) || []).length, 4);
+  assert.equal((api.match(/tg:\/\/proxy\?/g) || []).length, 4);
   assert.ok(api.includes("212.118.53.195"));
   assert.ok(api.includes("103.161.35.23"));
   assert.ok(api.includes("77.238.241.225"));
   assert.ok(api.includes("gos.8f.dk.euv.4h.d.kw.68-309-27-46.ir"));
-  assert.doesNotMatch(api, /https:\\/\\//);
+  assert.doesNotMatch(api, /https:\/\//);
   assert.ok(api.includes("s-maxage=15, stale-while-revalidate=0"));
 });
 
